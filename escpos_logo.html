@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ESC/POS Logo & Bill Generator</title>
+  <style>
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: #38bdf8;
+      text-transform: uppercase;
+    }
+    .panel {
+      background: #1e293b;
+      padding: 24px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    input[type="file"], input[type="number"] {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #f1f5f9;
+      padding: 8px;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    canvas {
+      border: 1px dashed #475569;
+      background: #fff;
+      margin-top: 10px;
+      max-width: 100%;
+      display: none;
+    }
+    textarea {
+      width: 100%;
+      height: 150px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #10b981;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 10px;
+      border-radius: 4px;
+      box-sizing: border-box;
+      resize: vertical;
+    }
+    .btn {
+      background: #0284c7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn:hover { background: #0369a1; }
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      color: #4ade80;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .badge.show { opacity: 1; }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>ESC/POS Logo & Bill Generator</h1>
+
+<div class="panel">
+  <div class="grid">
+    <div class="form-group">
+      <label>1. Upload Logo (will be converted to B&W)</label>
+      <input type="file" id="logoInput" accept="image/*" />
+    </div>
+    <div class="form-group">
+      <label>Max Printer Width (Pixels)</label>
+      <input type="number" id="printerWidth" value="384" step="8" />
+      <small style="color:#64748b;">(Must be multiple of 8. 384 for 58mm, 576 for 80mm)</small>
+    </div>
+  </div>
+  
+  <div>
+    <label>Preview (1-bit Bitmap)</label>
+    <canvas id="canvasPreview"></canvas>
+  </div>
+  
+  <div class="form-group" style="margin-top: 20px;">
+    <label>2. Receipt Text Content</label>
+    <textarea id="textBill" spellcheck="false">
+--------------------------------
+       SPICE GARDEN
+  123, MG Road, Koramangala
+      Bengaluru - 560034
+--------------------------------
+#2047  17/04/26  05:27  T-04
+Cashier: Rajan K.
+--------------------------------
+Item             Qty      Price
+--------------------------------
+Butter Chicken     2     560.00
+Garlic Naan        4     160.00
+--------------------------------
+TOTAL                   1220.00
+--------------------------------
+        * Thank You! *
+        Visit Again!
+--------------------------------</textarea>
+  </div>
+
+  <button class="btn" onclick="generatePayload()">⚡ Generate ESC/POS Bytes Array</button>
+</div>
+
+<div class="panel">
+  <label>3. Output Dart/Uint8Array (Copy to App Code)</label>
+  <textarea id="outputBytes" readonly placeholder="Resulting bytes..."></textarea>
+  <button class="btn" style="background:#475569; margin-top:10px;" onclick="copyBytes()">📋 Copy Byte Array</button>
+  <span class="badge" id="copyBadge">Copied!</span>
+</div>
+
+<script>
+  const logoInput    = document.getElementById('logoInput');
+  const printerWidth = document.getElementById('printerWidth');
+  const canvasPreview= document.getElementById('canvasPreview');
+  const ctx          = canvasPreview.getContext('2d');
+  
+  let imageData1Bit = null;
+  let finalImgWidth = 0;
+  let finalImgHeight = 0;
+
+  logoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        processImage(img);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function processImage(img) {
+    // Determine target width (must be multiple of 8 for ESC/POS)
+    let targetW = parseInt(printerWidth.value, 10);
+    if (targetW % 8 !== 0) targetW -= (targetW % 8);
+    
+    // Resize image maintaining aspect ratio
+    let targetH = Math.round((img.height / img.width) * targetW);
+    
+    canvasPreview.width = targetW;
+    canvasPreview.height = targetH;
+    canvasPreview.style.display = 'block';
+    
+    // Draw on canvas
+    ctx.drawImage(img, 0, 0, targetW, targetH);
+    
+    // Convert to black and white (thresholding)
+    const imgData = ctx.getImageData(0, 0, targetW, targetH);
+    const data = imgData.data;
+    
+    for (let i = 0; i < data.length; i += 4) {
+      // Calculate luminance
+      const r = data[i];
+      const g = data[i+1];
+      const b = data[i+2];
+      const a = data[i+3];
+      
+      // If transparent, make it white
+      if (a < 128) {
+        data[i] = data[i+1] = data[i+2] = 255;
+        data[i+3] = 255;
+      } else {
+        const luminance = 0.299*r + 0.587*g + 0.114*b;
+        const bw = luminance > 128 ? 255 : 0;
+        data[i] = data[i+1] = data[i+2] = bw;
+      }
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+    imageData1Bit = ctx.getImageData(0, 0, targetW, targetH);
+    finalImgWidth = targetW;
+    finalImgHeight = targetH;
+  }
+
+  function generatePayload() {
+    let bytes = [];
+    
+    // 1. Initialize Printer [ESC @]
+    bytes.push(27, 64);
+    
+    // 2. Add Logo if exists
+    if (imageData1Bit) {
+      // Center Align [ESC a 1]
+      bytes.push(27, 97, 1);
+      
+      // GS v 0 format
+      // [29, 118, 48, 0, xL, xH, yL, yH, data...]
+      const xBytes = finalImgWidth / 8;
+      const xL = xBytes % 256;
+      const xH = Math.floor(xBytes / 256);
+      
+      const height = finalImgHeight;
+      const yL = height % 256;
+      const yH = Math.floor(height / 256);
+      
+      bytes.push(29, 118, 48, 0, xL, xH, yL, yH);
+      
+      const data = imageData1Bit.data;
+      
+      // Convert RGBA to 1-bit ESC/POS raster data
+      for (let y = 0; y < height; y++) {
+        for (let xByte = 0; xByte < xBytes; xByte++) {
+          let byte = 0;
+          for (let bit = 0; bit < 8; bit++) {
+            const x = xByte * 8 + bit;
+            const index = (y * finalImgWidth + x) * 4;
+            // Red channel (it's B&W, so R=G=B). 0 is black (print dot), 255 is white (no dot)
+            const isBlack = data[index] === 0;
+            if (isBlack) {
+              byte |= (1 << (7 - bit));
+            }
+          }
+          bytes.push(byte);
+        }
+      }
+      
+      // Add slight spacing after logo
+      bytes.push(10, 10);
+    }
+    
+    // 3. Left Align [ESC a 0]
+    bytes.push(27, 97, 0);
+    
+    // 4. Text Content + newlines
+    const textData = document.getElementById('textBill').value;
+    for (let c of textData) {
+       bytes.push(c.charCodeAt(0));
+    }
+    
+    // 5. Feed lines and cut paper [GS V A 0]
+    bytes.push(10, 10, 10, 10, 29, 86, 65, 0);
+    
+    // Display
+    document.getElementById('outputBytes').value = '[' + bytes.join(', ') + ']';
+  }
+
+  function copyBytes() {
+    const ob = document.getElementById('outputBytes');
+    if(!ob.value) return;
+    ob.select();
+    document.execCommand('copy');
+    
+    const badge = document.getElementById('copyBadge');
+    badge.classList.add('show');
+    setTimeout(() => badge.classList.remove('show'), 2000);
+  }
+</script>
+
+</body>
+</html>
