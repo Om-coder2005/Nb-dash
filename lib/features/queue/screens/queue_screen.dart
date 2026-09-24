@@ -7,10 +7,9 @@ import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/features/queue/providers/queue_provider.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
 import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
-
 import 'package:nextbills/shared/widgets/nb_toast.dart';
 
 class QueueScreen extends ConsumerWidget {
@@ -39,8 +38,8 @@ class QueueScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _showAddEntryDialog(context, ref),
-        icon: Icon(Icons.person_add_rounded),
-        label: Text('Add Guest'),
+        icon: const Icon(Icons.person_add_rounded),
+        label: const Text('Add Guest'),
       ),
     );
   }
@@ -50,8 +49,8 @@ class QueueScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.group_outlined, size: 80, color: AppColors.textMuted.withOpacity(0.5)),
-          SizedBox(height: 16),
+          Icon(Icons.group_outlined, size: 80, color: AppColors.textMuted.withValues(alpha: 0.5)),
+          const SizedBox(height: 16),
           Text(
             'No guests in queue',
             style: GoogleFonts.manrope(
@@ -60,12 +59,12 @@ class QueueScreen extends ConsumerWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'Add guests here during peak hours',
             style: GoogleFonts.inter(color: AppColors.textMuted),
           ),
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
           NbButton(
             text: 'Add First Guest',
             onPressed: () => _showAddEntryDialog(context, ref),
@@ -79,7 +78,7 @@ class QueueScreen extends ConsumerWidget {
     return Scrollbar(
       thumbVisibility: true,
       child: ListView.builder(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
         itemCount: entries.length,
         itemBuilder: (context, index) {
           final entry = entries[index];
@@ -107,21 +106,21 @@ class _QueueEntryCard extends ConsumerWidget {
     final timeStr = DateFormat('hh:mm a').format(entry.createdAt);
     
     return Container(
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             // Position Number
@@ -131,7 +130,7 @@ class _QueueEntryCard extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: AppColors.primaryGlow,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
               ),
               child: Center(
                 child: Text(
@@ -144,7 +143,7 @@ class _QueueEntryCard extends ConsumerWidget {
                 ),
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             // Guest Details
             Expanded(
               child: Column(
@@ -158,11 +157,11 @@ class _QueueEntryCard extends ConsumerWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
                       Icon(Icons.people_alt_rounded, size: 14, color: AppColors.textSecondary),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         '${entry.requiredSeats} Persons',
                         style: GoogleFonts.inter(
@@ -170,9 +169,9 @@ class _QueueEntryCard extends ConsumerWidget {
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Icon(Icons.access_time_rounded, size: 14, color: AppColors.textMuted),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         timeStr,
                         style: GoogleFonts.inter(
@@ -183,7 +182,7 @@ class _QueueEntryCard extends ConsumerWidget {
                     ],
                   ),
                   if (entry.customerPhone != null && entry.customerPhone!.isNotEmpty) ...[
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       entry.customerPhone!,
                       style: GoogleFonts.inter(
@@ -204,7 +203,7 @@ class _QueueEntryCard extends ConsumerWidget {
                   onPressed: () => ref.read(queueControllerProvider.notifier).markAsSeated(entry.id),
                   tooltip: 'Mark Seated',
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 _ActionButton(
                   icon: Icons.cancel_rounded,
                   color: AppColors.error,
@@ -263,9 +262,9 @@ class _ActionButton extends StatelessWidget {
         onTap: onPressed,
         borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 24),
@@ -283,7 +282,6 @@ class _AddQueueEntryDialog extends ConsumerStatefulWidget {
 }
 
 class _AddQueueEntryDialogState extends ConsumerState<_AddQueueEntryDialog> {
-  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   int _seats = 2;
@@ -308,14 +306,14 @@ class _AddQueueEntryDialogState extends ConsumerState<_AddQueueEntryDialog> {
               hintText: 'Customer Name',
               prefixIcon: Icons.person_rounded,
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             NbInput(
               controller: _phoneController,
               type: NbInputType.number,
               hintText: 'Phone Number (Optional)',
               prefixIcon: Icons.phone_rounded,
             ),
-              SizedBox(height: 24),
+              const SizedBox(height: 24),
               Row(
                 children: [
                   Text(
@@ -376,7 +374,7 @@ class _SeatSelector extends StatelessWidget {
         children: [
           IconButton(
             onPressed: value > 1 ? () => onChanged(value - 1) : null,
-            icon: Icon(Icons.remove_rounded),
+            icon: const Icon(Icons.remove_rounded),
             color: AppColors.primary,
           ),
           SizedBox(
@@ -393,7 +391,7 @@ class _SeatSelector extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => onChanged(value + 1),
-            icon: Icon(Icons.add_rounded),
+            icon: const Icon(Icons.add_rounded),
             color: AppColors.primary,
           ),
         ],

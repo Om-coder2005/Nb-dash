@@ -59,7 +59,7 @@ class AppColors {
   static Color get border => isDarkMode ? borderDark : borderLight;
   static Color get primary => isDarkMode ? primaryDarkMode : primaryLightMode;
   static Color get primaryDark => primary;
-  static Color get primaryGlow => primary.withOpacity(0.2);
+  static Color get primaryGlow => primary.withValues(alpha: 0.2);
   static Color get textPrimary => isDarkMode ? textPrimaryDark : textPrimaryLight;
   static Color get textSecondary => isDarkMode ? textSecondaryDark : textSecondaryLight;
   static Color get textMuted => isDarkMode ? textMutedDark : textMutedLight;
@@ -141,7 +141,7 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColors.textPrimaryLight),
         surfaceTintColor: Colors.transparent,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: AppColors.cardLight,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -149,7 +149,6 @@ class AppTheme {
         ),
         margin: EdgeInsets.zero,
       ),
-      useMaterial3: true,
     );
   }
 
@@ -175,7 +174,7 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColors.textPrimaryDark),
         surfaceTintColor: Colors.transparent,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: const CardThemeData(
         color: AppColors.cardDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -183,7 +182,6 @@ class AppTheme {
         ),
         margin: EdgeInsets.zero,
       ),
-      useMaterial3: true,
     );
   }
 }

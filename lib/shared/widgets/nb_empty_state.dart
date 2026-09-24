@@ -30,7 +30,7 @@ class NbEmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppSpacing.xl),
               decoration: BoxDecoration(
-                color: AppColors.primaryGlow.withOpacity(0.1),
+                color: AppColors.primaryGlow.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(

@@ -1,18 +1,16 @@
 import 'dart:convert';
+
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:drift/drift.dart' hide Column, Row;
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
-import 'package:nextbills/core/utils/formatters.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
 import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/core/utils/keyboard_helper.dart';
 
 class RecipeAndSopDialog extends ConsumerStatefulWidget {
   final MenuItem menuItem;
@@ -238,7 +236,7 @@ class _RecipeAndSopDialogState extends ConsumerState<RecipeAndSopDialog>
                         children: [
                           Text(
                             'Estimated Cost: ₹${calculatedCost.toStringAsFixed(2)}',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.success, fontSize: 14),
+                            style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.success, fontSize: 14),
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -307,7 +305,7 @@ class _RecipeAndSopDialogState extends ConsumerState<RecipeAndSopDialog>
                                     title: Text(rawItem.name, style: const TextStyle(fontWeight: FontWeight.bold)),
                                     subtitle: Text('Quantity: ${recipe.quantityRequired} ${recipe.unit}'),
                                     trailing: IconButton(
-                                      icon: Icon(Icons.delete_rounded, color: AppColors.error, size: 20),
+                                      icon: const Icon(Icons.delete_rounded, color: AppColors.error, size: 20),
                                       onPressed: () async {
                                         await db.deleteRecipeItem(recipe.id);
                                         setState(() {});
@@ -455,7 +453,7 @@ class _RecipeAndSopDialogState extends ConsumerState<RecipeAndSopDialog>
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<int>(
-                  value: selectedRawItemId,
+                  initialValue: selectedRawItemId,
                   decoration: const InputDecoration(labelText: 'Select Raw Material', border: OutlineInputBorder()),
                   items: rawItems
                       .map((r) => DropdownMenuItem(value: r.id, child: Text('${r.name} (${r.unit})')))
@@ -522,7 +520,7 @@ class _RecipeAndSopDialogState extends ConsumerState<RecipeAndSopDialog>
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
-                  value: sourceItemId,
+                  initialValue: sourceItemId,
                   decoration: const InputDecoration(labelText: 'Source Menu Item', border: OutlineInputBorder()),
                   items: candidateItems
                       .map((m) => DropdownMenuItem(value: m.id, child: Text(m.name)))

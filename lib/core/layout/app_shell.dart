@@ -44,7 +44,7 @@ class AppShell extends ConsumerWidget {
                         const _TopBar(),
                         Expanded(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.only(topLeft: Radius.circular(AppRadius.lg)),
+                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(AppRadius.lg)),
                             child: child,
                           ),
                         ),
@@ -99,7 +99,7 @@ class _Sidebar extends StatelessWidget {
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: AppRadius.smBorder,
                       ),
                       child: Icon(Icons.restaurant, color: AppColors.primary, size: 20),
@@ -139,6 +139,12 @@ class _Sidebar extends StatelessWidget {
                   label: 'Queue',
                   isSelected: location == '/queue',
                   onTap: () => context.go('/queue'),
+                ),
+                _SidebarItem(
+                  icon: Icons.kitchen_outlined,
+                  label: 'Kitchen',
+                  isSelected: location == '/kitchen',
+                  onTap: () => context.go('/kitchen'),
                 ),
                 _SidebarItem(
                   icon: Icons.print_outlined,
@@ -302,12 +308,12 @@ class _BottomNavMobile extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       height: 64,
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.95),
+        color: AppColors.surface.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 1.5),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -416,7 +422,7 @@ class _MobileNavItem extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Material(
-        color: isSelected ? AppColors.primary.withOpacity(0.15) : Colors.transparent,
+        color: isSelected ? AppColors.primary.withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
         child: InkWell(
           onTap: onTap,
@@ -747,7 +753,7 @@ class _GlobalSearchBarState extends ConsumerState<_GlobalSearchBar> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
-                        color: item.isVeg ? AppColors.success.withOpacity(0.15) : AppColors.error.withOpacity(0.15),
+                        color: item.isVeg ? AppColors.success.withValues(alpha: 0.15) : AppColors.error.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(

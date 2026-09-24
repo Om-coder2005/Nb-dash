@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'database.g.dart';
@@ -86,6 +84,8 @@ class KotRecords extends Table {
   IntColumn get kotNumber => integer()();
   TextColumn get itemsJson => text()(); // JSON snapshot of items
   DateTimeColumn get printedAt => dateTime()();
+  TextColumn get kitchenStatus => text().withDefault(const Constant('new'))(); // new, preparing, ready, completed
+  DateTimeColumn get kitchenUpdatedAt => dateTime().nullable()();
 }
 
 class Bills extends Table {
@@ -104,6 +104,8 @@ class Bills extends Table {
   TextColumn get itemsJson => text()();
   DateTimeColumn get createdAt => dateTime()();
   IntColumn get billNumber => integer().nullable()();
+  BoolColumn get isSynced => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get syncedAt => dateTime().nullable()();
 }
 
 class PrinterConfigs extends Table {
@@ -301,8 +303,10 @@ class StockWastage extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  AppDatabase.forTesting(super.executor);
+
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -322,6 +326,8 @@ class AppDatabase extends _$AppDatabase {
     try {
       // 1. Ensure all columns exist on modified core tables
       await _safeAddColumn('bills', 'bill_number', 'INTEGER');
+      await _safeAddColumn('bills', 'is_synced', 'INTEGER NOT NULL DEFAULT 0');
+      await _safeAddColumn('bills', 'synced_at', 'TEXT');
       await _safeAddColumn('bills', 'split_cash', 'REAL NOT NULL DEFAULT 0.0');
       await _safeAddColumn('bills', 'split_online', 'REAL NOT NULL DEFAULT 0.0');
       await _safeAddColumn('menu_items', 'has_half_full', 'INTEGER NOT NULL DEFAULT 0');
@@ -331,6 +337,8 @@ class AppDatabase extends _$AppDatabase {
       await _safeAddColumn('menu_items', 'custom_variants_json', 'TEXT NOT NULL DEFAULT \'[]\'');
       await _safeAddColumn('order_items', 'item_size', 'TEXT NOT NULL DEFAULT \'Full\'');
       await _safeAddColumn('order_items', 'printed_quantity', 'INTEGER NOT NULL DEFAULT 0');
+      await _safeAddColumn('kot_records', 'kitchen_status', 'TEXT NOT NULL DEFAULT \'new\'');
+      await _safeAddColumn('kot_records', 'kitchen_updated_at', 'TEXT');
 
       // 2. Automatically ensure EVERY table registered in AppDatabase exists safely
       for (final table in allTables) {
@@ -351,7 +359,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> _safeCreateTable(TableInfo table) async {
     try {
-      await customStatement('CREATE TABLE IF NOT EXISTS "${table.actualTableName}" (${table.$columns.map((c) => c.escapedName).join(', ')})');
+      await customStatement('CREATE TABLE IF NOT EXISTS "${table.actualTableName}" (${table.$columns.map((c) => c.escapedNameFor(SqlDialect.sqlite)).join(', ')})');
     } catch (_) {
       try {
         await createMigrator().createTable(table);
@@ -565,6 +573,26 @@ class AppDatabase extends _$AppDatabase {
   Future<List<KotRecord>> getKotsByOrder(int orderId) =>
       (select(kotRecords)..where((t) => t.orderId.equals(orderId))).get();
 
+  Stream<List<KotRecord>> watchKitchenKots() {
+    return (select(kotRecords)
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.kitchenUpdatedAt),
+            (t) => OrderingTerm.desc(t.printedAt),
+          ]))
+        .watch();
+  }
+
+  Future<void> updateKotKitchenStatus(int kotId, String status) async {
+    final row = await (select(kotRecords)..where((t) => t.id.equals(kotId))).getSingleOrNull();
+    if (row == null) return;
+    await (update(kotRecords)..where((t) => t.id.equals(kotId))).write(
+      KotRecordsCompanion(
+        kitchenStatus: Value(status),
+        kitchenUpdatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   Future<int> getNextKotNumber() async {
     final now = DateTime.now();
     final start = DateTime(now.year, now.month, now.day);
@@ -717,7 +745,6 @@ class AppDatabase extends _$AppDatabase {
       // Get the entry being removed
       final entryToRemove = await (select(queueEntries)..where((t) => t.id.equals(id))).getSingleOrNull();
       if (entryToRemove == null) return;
-
       final removedNumber = entryToRemove.waitingNumber;
 
       // Update its status
@@ -743,20 +770,11 @@ class AppDatabase extends _$AppDatabase {
       final entryToRemove = await (select(queueEntries)..where((t) => t.id.equals(id))).getSingleOrNull();
       if (entryToRemove == null) return;
 
-      final removedNumber = entryToRemove.waitingNumber;
-
       // Update its status
       await (update(queueEntries)..where((t) => t.id.equals(id)))
           .write(const QueueEntriesCompanion(status: Value('seated')));
 
-      // Shift all following numbers down
-      final followingEntries = await (select(queueEntries)
-            ..where((t) => t.status.equals('waiting') & t.waitingNumber.isBiggerThanValue(removedNumber))
-            ..orderBy([(t) => OrderingTerm(expression: t.waitingNumber)]))
-          .get();
-
-      for (final entry in followingEntries) {
-      }
+      // Waiting numbers are retained after seating so existing queue history stays intact.
     });
   }
 
@@ -773,6 +791,7 @@ class AppDatabase extends _$AppDatabase {
   // ─── STAFF QUERIES ─────────────────────────────
   Stream<List<StaffData>> watchAllStaff() =>
       (select(staff)..where((t) => t.isActive.equals(true))).watch();
+  Stream<List<StaffData>> watchAllStaffIncludingInactive() => select(staff).watch();
   Future<List<StaffData>> getAllStaff() => select(staff).get();
   Future<int> insertStaff(StaffCompanion s) => into(staff).insert(s);
   Future<bool> updateStaff(StaffData s) => update(staff).replace(s);

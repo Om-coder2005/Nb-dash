@@ -1,21 +1,15 @@
-import 'dart:convert';
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:drift/drift.dart' hide Column, Row;
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
-import 'package:nextbills/core/utils/formatters.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/core/utils/keyboard_helper.dart';
 
 class InventoryScreen extends ConsumerStatefulWidget {
   const InventoryScreen({super.key});
@@ -46,7 +40,6 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
   @override
   Widget build(BuildContext context) {
     ref.watch(themeModeProvider);
-    final db = ref.watch(databaseProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -66,11 +59,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          const _RawMaterialsTab(),
-          const _StockBatchesTab(),
-          const _InventoryAlertsTab(),
-          const _StockWastageTab(),
+        children: const [
+          _RawMaterialsTab(),
+          _StockBatchesTab(),
+          _InventoryAlertsTab(),
+          _StockWastageTab(),
         ],
       ),
       floatingActionButton: Padding(
@@ -135,7 +128,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                       const SizedBox(width: 12),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: category,
+                          initialValue: category,
                           decoration: const InputDecoration(
                             labelText: 'Category',
                             border: OutlineInputBorder(),
@@ -230,7 +223,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButtonFormField<int>(
-                    value: selectedRawItemId,
+                    initialValue: selectedRawItemId,
                     decoration: const InputDecoration(
                       labelText: 'Select Raw Material',
                       border: OutlineInputBorder(),
@@ -269,7 +262,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -404,7 +397,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DropdownButtonFormField<int>(
-                    value: selectedRawItemId,
+                    initialValue: selectedRawItemId,
                     decoration: const InputDecoration(
                       labelText: 'Select Wasted Raw Material',
                       border: OutlineInputBorder(),
@@ -430,7 +423,7 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen>
                       const SizedBox(width: 12),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: reason,
+                          initialValue: reason,
                           decoration: const InputDecoration(
                             labelText: 'Reason for Wastage',
                             border: OutlineInputBorder(),
@@ -491,7 +484,7 @@ class _RawMaterialsTab extends ConsumerWidget {
     return StreamBuilder<List<RawItem>>(
       stream: db.watchRawItems(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return NbLoadingPulse();
+        if (!snapshot.hasData) return const NbLoadingPulse();
         final rawItems = snapshot.data!;
         if (rawItems.isEmpty) {
           return Center(
@@ -539,7 +532,7 @@ class _RawMaterialsTab extends ConsumerWidget {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   decoration: BoxDecoration(
-                                    color: isLowStock ? AppColors.error.withOpacity(0.15) : AppColors.primary.withOpacity(0.15),
+                                    color: isLowStock ? AppColors.error.withValues(alpha: 0.15) : AppColors.primary.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Icon(
@@ -601,7 +594,7 @@ class _RawMaterialsTab extends ConsumerWidget {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                         decoration: BoxDecoration(
-                                          color: AppColors.error.withOpacity(0.15),
+                                          color: AppColors.error.withValues(alpha: 0.15),
                                           borderRadius: BorderRadius.circular(4),
                                         ),
                                         child: const Text('LOW STOCK', style: TextStyle(color: AppColors.error, fontSize: 10, fontWeight: FontWeight.bold)),
@@ -639,7 +632,7 @@ class _StockBatchesTab extends ConsumerWidget {
     return StreamBuilder<List<StockBatche>>(
       stream: db.watchStockBatches(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return NbLoadingPulse();
+        if (!snapshot.hasData) return const NbLoadingPulse();
         final batches = snapshot.data!;
         if (batches.isEmpty) {
           return Center(
@@ -664,7 +657,7 @@ class _StockBatchesTab extends ConsumerWidget {
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
-                  color: isDepleted ? AppColors.card.withOpacity(0.5) : AppColors.card,
+                  color: isDepleted ? AppColors.card.withValues(alpha: 0.5) : AppColors.card,
                   elevation: isDepleted ? 0 : 2,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
@@ -699,7 +692,7 @@ class _StockBatchesTab extends ConsumerWidget {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                           decoration: BoxDecoration(
-                                            color: AppColors.primary.withOpacity(0.1),
+                                            color: AppColors.primary.withValues(alpha: 0.1),
                                             borderRadius: BorderRadius.circular(6),
                                           ),
                                           child: Text(
@@ -784,7 +777,7 @@ class _InventoryAlertsTab extends ConsumerWidget {
     return StreamBuilder<List<RawItem>>(
       stream: db.watchRawItems(),
       builder: (context, rawSnap) {
-        if (!rawSnap.hasData) return NbLoadingPulse();
+        if (!rawSnap.hasData) return const NbLoadingPulse();
         final rawItems = rawSnap.data!;
 
         return StreamBuilder<List<StockBatche>>(
@@ -822,9 +815,9 @@ class _InventoryAlertsTab extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle_outline_rounded, size: 64, color: AppColors.success),
+                    const Icon(Icons.check_circle_outline_rounded, size: 64, color: AppColors.success),
                     const SizedBox(height: 16),
-                    Text('Inventory Healthy!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.success)),
+                    const Text('Inventory Healthy!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.success)),
                     const SizedBox(height: 8),
                     Text('No low stock or expiring batches detected.', style: TextStyle(color: AppColors.textMuted)),
                   ],
@@ -836,13 +829,13 @@ class _InventoryAlertsTab extends ConsumerWidget {
               padding: const EdgeInsets.all(16),
               children: [
                 if (lowStockItems.isNotEmpty) ...[
-                  Text('LOW STOCK WARNINGS', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, letterSpacing: 1.2)),
+                  const Text('LOW STOCK WARNINGS', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, letterSpacing: 1.2)),
                   const SizedBox(height: 8),
                   ...lowStockItems.map((data) {
                     final RawItem item = data['item'];
                     final double qty = data['currentQty'];
                     return Card(
-                      color: AppColors.error.withOpacity(0.08),
+                      color: AppColors.error.withValues(alpha: 0.08),
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: const Icon(Icons.warning_amber_rounded, color: AppColors.error),
@@ -858,14 +851,14 @@ class _InventoryAlertsTab extends ConsumerWidget {
                   const SizedBox(height: 24),
                 ],
                 if (nearExpiryBatches.isNotEmpty) ...[
-                  Text('EXPIRY WARNINGS', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.warning, letterSpacing: 1.2)),
+                  const Text('EXPIRY WARNINGS', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.warning, letterSpacing: 1.2)),
                   const SizedBox(height: 8),
                   ...nearExpiryBatches.map((data) {
                     final RawItem item = data['item'];
                     final StockBatche batch = data['batch'];
                     final int daysLeft = data['daysLeft'];
                     return Card(
-                      color: AppColors.warning.withOpacity(0.08),
+                      color: AppColors.warning.withValues(alpha: 0.08),
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: const Icon(Icons.event_busy_rounded, color: AppColors.warning),
@@ -905,7 +898,7 @@ class _StockWastageTab extends ConsumerWidget {
     return StreamBuilder<List<StockWastageData>>(
       stream: db.watchStockWastage(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return NbLoadingPulse();
+        if (!snapshot.hasData) return const NbLoadingPulse();
         final wastageList = snapshot.data!;
 
         if (wastageList.isEmpty) {
@@ -938,9 +931,9 @@ class _StockWastageTab extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.error.withOpacity(0.1),
+                      color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                      border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -948,7 +941,7 @@ class _StockWastageTab extends ConsumerWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Total Recorded Wastage Loss',
                               style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, fontSize: 14),
                             ),
@@ -961,7 +954,7 @@ class _StockWastageTab extends ConsumerWidget {
                         ),
                         Text(
                           '₹${totalWastageCost.toStringAsFixed(2)}',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, fontSize: 20),
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, fontSize: 20),
                         ),
                       ],
                     ),
@@ -989,7 +982,7 @@ class _StockWastageTab extends ConsumerWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppColors.error.withOpacity(0.12),
+                        color: AppColors.error.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(Icons.delete_forever_rounded, color: AppColors.error, size: 20),
@@ -1005,7 +998,7 @@ class _StockWastageTab extends ConsumerWidget {
                       children: [
                         Text(
                           '₹${wastage.wastageCost.toStringAsFixed(2)}',
-                          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, fontSize: 15),
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.error, fontSize: 15),
                         ),
                         IconButton(
                           icon: Icon(Icons.delete_outline_rounded, size: 16, color: AppColors.textMuted),

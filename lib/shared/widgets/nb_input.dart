@@ -89,7 +89,7 @@ class _NbInputState extends State<NbInput> {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: AppSpacing.xs),
+          const SizedBox(height: AppSpacing.xs),
         ],
         AnimatedContainer(
           duration: AppDurations.fast,

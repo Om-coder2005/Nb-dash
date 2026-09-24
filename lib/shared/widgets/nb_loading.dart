@@ -46,7 +46,7 @@ class _NbSkeletonState extends State<NbSkeleton> with SingleTickerProviderStateM
           width: widget.width,
           height: widget.height,
           decoration: BoxDecoration(
-            color: baseColor.withOpacity(_animation.value * 0.1),
+            color: baseColor.withValues(alpha: _animation.value * 0.1),
             borderRadius: BorderRadius.circular(widget.borderRadius),
           ),
         );
@@ -107,7 +107,7 @@ class _NbLoadingPulseState extends State<NbLoadingPulse> with SingleTickerProvid
                   width: widget.size,
                   height: widget.size,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.5),
+                    color: color.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                 ),

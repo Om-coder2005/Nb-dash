@@ -1,15 +1,13 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:drift/drift.dart' hide Column;
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 
 class TableManagementScreen extends ConsumerStatefulWidget {
@@ -58,7 +56,7 @@ class _TableManagementScreenState extends ConsumerState<TableManagementScreen>
         showBack: true,
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: 'Zones'),
             Tab(text: 'Tables'),
           ],
@@ -79,7 +77,7 @@ class _TableManagementScreenState extends ConsumerState<TableManagementScreen>
             _addTable(context);
           }
         },
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
         label: AnimatedBuilder(
           animation: _tabController,
           builder: (_, __) => Text(
@@ -136,10 +134,10 @@ class _ZonesTab extends ConsumerWidget {
         if (!snap.hasData) return const Center(child: NbLoadingPulse());
         final zones = snap.data!;
         if (zones.isEmpty) {
-          return Center(child: Text('No zones yet. Add one!'));
+          return const Center(child: Text('No zones yet. Add one!'));
         }
         return ReorderableListView.builder(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           itemCount: zones.length,
           onReorder: (oldIndex, newIndex) async {
             // Reorder zones
@@ -155,7 +153,7 @@ class _ZonesTab extends ConsumerWidget {
             final zone = zones[i];
             return Container(
               key: ValueKey(zone.id),
-              margin: EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(12),
@@ -166,7 +164,7 @@ class _ZonesTab extends ConsumerWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Color(zone.colorValue).withOpacity(0.2),
+                    color: Color(zone.colorValue).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.layers_rounded,
@@ -184,7 +182,7 @@ class _ZonesTab extends ConsumerWidget {
                       onPressed: () => _editZone(context, ref, db, zone),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete_rounded,
+                      icon: const Icon(Icons.delete_rounded,
                           size: 18, color: AppColors.error),
                       onPressed: () async {
                         final confirm = await showDialog<bool>(
@@ -246,7 +244,7 @@ class _TablesTab extends ConsumerWidget {
         if (!snap.hasData) return const Center(child: NbLoadingPulse());
         final tables = snap.data!;
         if (tables.isEmpty) {
-          return Center(child: Text('No tables. Add one!'));
+          return const Center(child: Text('No tables. Add one!'));
         }
         return StreamBuilder<List<Zone>>(
           stream: db.watchAllZones(),
@@ -254,13 +252,13 @@ class _TablesTab extends ConsumerWidget {
             final zones = zoneSnap.data ?? [];
             final zoneMap = {for (final z in zones) z.id: z};
             return ListView.builder(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               itemCount: tables.length,
               itemBuilder: (context, i) {
                 final table = tables[i];
                 final zone = zoneMap[table.zoneId];
                 return Container(
-                  margin: EdgeInsets.only(bottom: 8),
+                  margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(12),
@@ -272,7 +270,7 @@ class _TablesTab extends ConsumerWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: zone != null
-                            ? Color(zone.colorValue).withOpacity(0.15)
+                            ? Color(zone.colorValue).withValues(alpha: 0.15)
                             : AppColors.surface,
                         borderRadius: table.shape == 'circle'
                             ? BorderRadius.circular(20)
@@ -305,7 +303,7 @@ class _TablesTab extends ConsumerWidget {
                               _editTable(context, ref, db, table, zones),
                         ),
                         IconButton(
-                          icon: Icon(Icons.delete_rounded,
+                          icon: const Icon(Icons.delete_rounded,
                               size: 18, color: AppColors.error),
                           onPressed: () async {
                             final confirm = await showDialog<bool>(
@@ -418,7 +416,7 @@ class _ZoneDialogState extends ConsumerState<_ZoneDialog> {
             controller: _nameController,
             hintText: 'Zone Name',
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             children: colors.map((c) {
@@ -531,7 +529,7 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
                   : (zones.isNotEmpty ? zones.first.id : null);
 
               return DropdownButtonFormField<int>(
-                value: effectiveZoneId,
+                initialValue: effectiveZoneId,
                 decoration: InputDecoration(
                   labelText: 'Zone',
                   labelStyle: TextStyle(color: AppColors.textSecondary),
@@ -547,7 +545,7 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
               );
             },
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -556,7 +554,7 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
                   hintText: 'Table No.',
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: NbInput(
                   controller: _nameController,
@@ -565,7 +563,7 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             children: [
               Text('Capacity: ', style: GoogleFonts.inter(color: AppColors.textPrimary)),
@@ -582,11 +580,11 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             children: [
               Text('Shape: ', style: GoogleFonts.inter(color: AppColors.textPrimary)),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               ChoiceChip(
                 label: Text('Square', style: TextStyle(color: _shape == 'square' ? AppColors.bg : AppColors.textPrimary)),
                 selected: _shape == 'square',
@@ -594,7 +592,7 @@ class _TableDialogState extends ConsumerState<_TableDialog> {
                 backgroundColor: AppColors.surface,
                 onSelected: (_) => setState(() => _shape = 'square'),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               ChoiceChip(
                 label: Text('Round', style: TextStyle(color: _shape == 'circle' ? AppColors.bg : AppColors.textPrimary)),
                 selected: _shape == 'circle',

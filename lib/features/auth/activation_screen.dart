@@ -147,7 +147,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.topCenter,
             radius: 1.5,
@@ -157,7 +157,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: isTablet ? 420 : double.infinity),
                 child: Column(
@@ -178,7 +178,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: (_isLockedOut ? AppColors.error : AppColors.primary).withOpacity(0.35),
+                            color: (_isLockedOut ? AppColors.error : AppColors.primary).withValues(alpha: 0.35),
                             blurRadius: 28,
                             spreadRadius: 4,
                           ),
@@ -190,7 +190,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         size: 44,
                       ),
                     ),
-                    SizedBox(height: 28),
+                    const SizedBox(height: 28),
 
                     // Header Texts
                     Text(
@@ -202,7 +202,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         letterSpacing: -0.5,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Please enter your product activation key to license this device offline.',
                       textAlign: TextAlign.center,
@@ -212,7 +212,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         height: 1.4,
                       ),
                     ),
-                    SizedBox(height: 36),
+                    const SizedBox(height: 36),
 
                     // Key Input Field
                     NbInput(
@@ -223,19 +223,19 @@ class _ActivationScreenState extends State<ActivationScreen> {
                     
                     // Error / Lockout Messages
                     if (_errorMessage.isNotEmpty) ...[
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.08),
+                          color: AppColors.error.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.error.withOpacity(0.2)),
+                          border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.info_outline_rounded, color: AppColors.error, size: 18),
-                            SizedBox(width: 8),
+                            const Icon(Icons.info_outline_rounded, color: AppColors.error, size: 18),
+                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 _isLockedOut 
@@ -252,7 +252,7 @@ class _ActivationScreenState extends State<ActivationScreen> {
                         ),
                       ),
                     ],
-                    SizedBox(height: 32),
+                    const SizedBox(height: 32),
 
                     // Submit Button
                     NbButton(
@@ -261,14 +261,14 @@ class _ActivationScreenState extends State<ActivationScreen> {
                       isLoading: _isChecking,
                       onPressed: (_isChecking || _isLockedOut) ? null : _activate,
                     ),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     
                     // Contact Info
                     Text(
                       'Contact NextBills for licensing support.',
                       style: GoogleFonts.inter(
                         fontSize: 11,
-                        color: AppColors.textMuted.withOpacity(0.5),
+                        color: AppColors.textMuted.withValues(alpha: 0.5),
                       ),
                     ),
                   ],

@@ -15,6 +15,8 @@ OutputBaseFilename=NextBills_Setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+MinVersion=10.0.17763
+
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

@@ -1,27 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:drift/drift.dart' hide Column;
+import 'package:excel/excel.dart' hide Border;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:excel/excel.dart' hide Border;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:drift/drift.dart' hide Column;
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
 import 'package:nextbills/core/providers/favorites_provider.dart';
 import 'package:nextbills/core/utils/formatters.dart';
+import 'package:nextbills/features/menu/widgets/recipe_sop_dialog.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/features/menu/widgets/recipe_sop_dialog.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
   const MenuScreen({super.key});
@@ -56,19 +54,19 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
         showBack: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.download_rounded),
+            icon: const Icon(Icons.download_rounded),
             tooltip: 'Download Sample XLSX',
             onPressed: _downloadSample,
           ),
           IconButton(
-            icon: Icon(Icons.upload_file_rounded),
+            icon: const Icon(Icons.upload_file_rounded),
             tooltip: 'Import XLSX',
             onPressed: _importXlsx,
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
+          tabs: const [
             Tab(text: 'Categories'),
             Tab(text: 'Items'),
           ],
@@ -85,7 +83,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
         onPressed: () => _tabController.index == 0
             ? _addCategory(context)
             : _addItem(context),
-        icon: Icon(Icons.add),
+        icon: const Icon(Icons.add),
         label: Text(_tabController.index == 0 ? 'Add Category' : 'Add Item'),
       ),
     );
@@ -237,7 +235,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen>
           final db = ref.read(databaseProvider);
           await db.insertCategory(MenuCategoriesCompanion.insert(
             name: name,
-            colorValue: Value(color.value),
+            colorValue: Value(color.toARGB32()),
           ));
         },
       ),
@@ -285,14 +283,14 @@ class _CategoriesTab extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.category_rounded, size: 60, color: AppColors.textMuted),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text('No categories yet', style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
           );
         }
         return ReorderableListView.builder(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           itemCount: cats.length,
           onReorder: (oldIndex, newIndex) async {
             if (newIndex > oldIndex) newIndex--;
@@ -307,7 +305,7 @@ class _CategoriesTab extends ConsumerWidget {
             final cat = cats[i];
             return Container(
               key: ValueKey(cat.id),
-              margin: EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(12),
@@ -318,7 +316,7 @@ class _CategoriesTab extends ConsumerWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Color(cat.colorValue).withOpacity(0.2),
+                    color: Color(cat.colorValue).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.category_rounded,
@@ -335,7 +333,7 @@ class _CategoriesTab extends ConsumerWidget {
                       onPressed: () => _editCategory(context, ref, cat),
                     ),
                     IconButton(
-                      icon: Icon(Icons.delete_rounded, size: 18, color: AppColors.error),
+                      icon: const Icon(Icons.delete_rounded, size: 18, color: AppColors.error),
                       onPressed: () async {
                         final confirm = await showDialog<bool>(
                           context: context,
@@ -383,7 +381,7 @@ class _CategoriesTab extends ConsumerWidget {
         onSave: (name, color) async {
           final updated = cat.copyWith(
             name: name,
-            colorValue: color.value,
+            colorValue: color.toARGB32(),
           );
           await ref.read(databaseProvider).updateCategory(updated);
         },
@@ -417,7 +415,7 @@ class _ItemsTabState extends ConsumerState<_ItemsTab> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: TextField(
             controller: _searchController,
             onChanged: (val) => setState(() => _searchQuery = val),
@@ -443,9 +441,9 @@ class _ItemsTabState extends ConsumerState<_ItemsTab> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.restaurant_menu_rounded, size: 60, color: AppColors.textMuted),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text('No menu items', style: Theme.of(context).textTheme.bodyMedium),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text('Tap + to add or import XLSX',
                           style: Theme.of(context).textTheme.bodySmall),
                     ],
@@ -454,12 +452,12 @@ class _ItemsTabState extends ConsumerState<_ItemsTab> {
               }
 
         return ListView.builder(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           itemCount: items.length,
           itemBuilder: (context, i) {
             final item = items[i];
             return Container(
-              margin: EdgeInsets.only(bottom: 8),
+              margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
                 color: AppColors.card,
                 borderRadius: BorderRadius.circular(12),
@@ -507,8 +505,8 @@ class _ItemsTabState extends ConsumerState<_ItemsTab> {
                           height: 44,
                           decoration: BoxDecoration(
                             color: item.isVeg
-                                ? AppColors.success.withOpacity(0.1)
-                                : AppColors.error.withOpacity(0.1),
+                                ? AppColors.success.withValues(alpha: 0.1)
+                                : AppColors.error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                             image: item.image != null && item.image!.isNotEmpty
                                 ? DecorationImage(
@@ -632,7 +630,7 @@ class _ItemsTabState extends ConsumerState<_ItemsTab> {
                         IconButton(
                           constraints: const BoxConstraints(),
                           padding: const EdgeInsets.all(6),
-                          icon: Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.error),
+                          icon: const Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.error),
                           onPressed: () async {
                             await ref.read(databaseProvider).deleteMenuItem(item.id);
                           },
@@ -732,11 +730,11 @@ class _CategoryDialogState extends ConsumerState<_CategoryDialog> {
             controller: _nameController,
             hintText: 'Category Name',
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Wrap(
             spacing: 8,
             children: colors.map((c) {
-              final isSelected = c.value == _selectedColor.value;
+              final isSelected = c.toARGB32() == _selectedColor.toARGB32();
               return GestureDetector(
                 onTap: () => setState(() => _selectedColor = c),
                 child: Container(
@@ -749,7 +747,7 @@ class _CategoryDialogState extends ConsumerState<_CategoryDialog> {
                         ? Border.all(color: Colors.white, width: 3)
                         : null,
                     boxShadow: isSelected
-                        ? [BoxShadow(color: c.withOpacity(0.6), blurRadius: 8)]
+                        ? [BoxShadow(color: c.withValues(alpha: 0.6), blurRadius: 8)]
                         : null,
                   ),
                 ),
@@ -898,7 +896,7 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.border),
                     image: _imageBase64 != null && _imageBase64!.isNotEmpty
@@ -946,7 +944,7 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                 if (_imageBase64 != null && _imageBase64!.isNotEmpty) ...[
                   const SizedBox(width: 8),
                   IconButton(
-                    icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+                    icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
                     onPressed: () => setState(() => _imageBase64 = null),
                   ),
                 ],
@@ -971,7 +969,7 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                     : (cats.isNotEmpty ? cats.first.id : null);
 
                 return DropdownButtonFormField<int>(
-                  value: effectiveCatId,
+                  initialValue: effectiveCatId,
                   decoration: InputDecoration(
                     labelText: 'Category',
                     labelStyle: TextStyle(color: AppColors.textSecondary),
@@ -987,12 +985,12 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                 );
               },
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             NbInput(
               controller: _nameController,
               hintText: 'Item Name',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             CheckboxListTile(
               title: Text('Half/Full Pricing Scheme', style: GoogleFonts.inter(color: AppColors.textPrimary, fontSize: 14)),
               value: _hasHalfFull,
@@ -1037,7 +1035,7 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                       prefixIcon: Icons.currency_rupee_rounded,
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: NbInput(
                       controller: _priceController,
@@ -1048,9 +1046,9 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: _defaultSize,
+                initialValue: _defaultSize,
                 decoration: InputDecoration(
                   labelText: 'Default Portion Size',
                   labelStyle: TextStyle(color: AppColors.textSecondary),
@@ -1138,12 +1136,12 @@ class _ItemDialogState extends ConsumerState<_ItemDialog> {
                 ),
               ),
             ],
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             NbInput(
               controller: _descController,
               hintText: 'Description (optional)',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Text('Type: ', style: GoogleFonts.inter(color: AppColors.textPrimary)),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:nextbills/app/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nextbills/app/theme.dart';
 
 enum NbButtonType { primary, secondary, danger, ghost, outline, success }
 
@@ -37,15 +37,11 @@ class _NbButtonState extends State<NbButton> with SingleTickerProviderStateMixin
   bool _isHovered = false;
   bool _isPressed = false;
   late AnimationController _scaleController;
-  late Animation<double> _scaleAnimation;
 
   @override
   void initState() {
     super.initState();
     _scaleController = AnimationController(vsync: this, duration: AppDurations.fast);
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.96).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeOutCubic)
-    );
   }
 
   @override
@@ -144,7 +140,7 @@ class _NbButtonState extends State<NbButton> with SingleTickerProviderStateMixin
       duration: AppDurations.fast,
       width: widget.width ?? (widget.isExpanded ? double.infinity : null),
       height: widget.height ?? 56.0,
-      padding: widget.padding ?? EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 0),
+      padding: widget.padding ?? const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: 0),
       decoration: BoxDecoration(
         color: _getBackgroundColor(context, isDark),
         borderRadius: AppRadius.pillBorder, // 999px
@@ -165,10 +161,10 @@ class _NbButtonState extends State<NbButton> with SingleTickerProviderStateMixin
                 valueColor: AlwaysStoppedAnimation<Color>(_getTextColor(context, isDark)),
               ),
             ),
-            SizedBox(width: AppSpacing.sm),
+            const SizedBox(width: AppSpacing.sm),
           ] else if (widget.icon != null) ...[
             Icon(widget.icon, size: 18, color: _getTextColor(context, isDark)),
-            SizedBox(width: AppSpacing.sm),
+            const SizedBox(width: AppSpacing.sm),
           ],
           Text(
             widget.text,

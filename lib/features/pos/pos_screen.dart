@@ -2,22 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:drift/drift.dart' hide Column;
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
 import 'package:nextbills/core/utils/formatters.dart';
-import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_empty_state.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_card.dart';
-import 'package:nextbills/shared/widgets/nb_loading.dart';
-import 'package:nextbills/shared/widgets/nb_dialog.dart';
-import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/features/order/order_screen.dart';
+import 'package:nextbills/features/print/print_preview_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_empty_state.dart';
+import 'package:nextbills/shared/widgets/nb_loading.dart';
+import 'package:nextbills/shared/widgets/nb_toast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Providers
 final zonesProvider = StreamProvider<List<Zone>>((ref) {
@@ -76,9 +70,6 @@ class _PosScreenState extends ConsumerState<PosScreen>
     ref.watch(themeModeProvider);
     final zonesAsync = ref.watch(zonesProvider);
     final openOrdersAsync = ref.watch(openOrdersProvider);
-    final size = MediaQuery.of(context).size;
-    final isTablet = size.width > 600;
-
     return zonesAsync.when(
       loading: () => const Scaffold(
         body: Center(child: NbLoadingPulse()),
@@ -93,7 +84,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
         return Scaffold(
           backgroundColor: AppColors.bg,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(60),
+            preferredSize: const Size.fromHeight(60),
             child: Container(
               color: AppColors.surface,
               child: Row(
@@ -121,7 +112,7 @@ class _PosScreenState extends ConsumerState<PosScreen>
                                               color: Color(z.colorValue),
                                             ),
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           Text(z.name),
                                         ],
                                       ),
@@ -132,19 +123,19 @@ class _PosScreenState extends ConsumerState<PosScreen>
                   // Stats chip
                   openOrdersAsync.when(
                     data: (orders) => Container(
-                      margin: EdgeInsets.only(right: 8),
-                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: AppColors.primaryGlow,
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.restaurant_rounded,
                               size: 14, color: AppColors.primary),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Text(
                             '${orders.length} Active',
                             style: GoogleFonts.manrope(
@@ -156,27 +147,27 @@ class _PosScreenState extends ConsumerState<PosScreen>
                         ],
                       ),
                     ),
-                    loading: () => SizedBox(),
-                    error: (e, s) => SizedBox(),
+                    loading: () => const SizedBox(),
+                    error: (e, s) => const SizedBox(),
                   ),
                   // Queue chip
                   ref.watch(queueCountProvider).when(
                     data: (count) => count > 0 ? GestureDetector(
                       onTap: () => context.pushNamed('queue'),
                       child: Container(
-                        margin: EdgeInsets.only(right: 16),
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        margin: const EdgeInsets.only(right: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.15),
+                          color: AppColors.error.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                          border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.people_alt_rounded,
+                            const Icon(Icons.people_alt_rounded,
                                 size: 14, color: AppColors.error),
-                            SizedBox(width: 6),
+                            const SizedBox(width: 6),
                             Text(
                               '$count Waiting',
                               style: GoogleFonts.manrope(
@@ -188,9 +179,9 @@ class _PosScreenState extends ConsumerState<PosScreen>
                           ],
                         ),
                       ),
-                    ) : SizedBox(),
-                    loading: () => SizedBox(),
-                    error: (e, s) => SizedBox(),
+                    ) : const SizedBox(),
+                    loading: () => const SizedBox(),
+                    error: (e, s) => const SizedBox(),
                   ),
                 ],
               ),
@@ -234,7 +225,7 @@ class _ZoneFloorPlan extends ConsumerWidget {
       stream: db.watchTablesByZone(zone.id),
       builder: (context, snap) {
         if (!snap.hasData) {
-          return Center(child: NbLoadingPulse());
+          return const Center(child: NbLoadingPulse());
         }
         final tables = snap.data!;
 
@@ -254,7 +245,7 @@ class _ZoneFloorPlan extends ConsumerWidget {
         final isQuickLookEnabled = ref.watch(tableQuickLookProvider);
 
         return openOrdersAsync.when(
-          loading: () => Center(child: NbLoadingPulse()),
+          loading: () => const Center(child: NbLoadingPulse()),
           error: (e, s) => Center(child: Text(e.toString())),
           data: (openOrders) {
             final openTableIds = openOrders.map((o) => o.tableId).toSet();
@@ -350,7 +341,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
           Container(
             height: 1,
             margin: const EdgeInsets.only(bottom: 6),
-            color: statusColor.withOpacity(0.2),
+            color: statusColor.withValues(alpha: 0.2),
           ),
           for (var item in displayItems)
             Padding(
@@ -411,7 +402,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
           width: 14,
           height: 4,
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(0.4),
+            color: statusColor.withValues(alpha: 0.4),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -419,15 +410,15 @@ class _TableCardState extends ConsumerState<_TableCard> {
           width: 135,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
           decoration: BoxDecoration(
-            color: statusColor.withOpacity(isDark ? 0.22 : 0.12),
+            color: statusColor.withValues(alpha: isDark ? 0.22 : 0.12),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: statusColor.withOpacity(0.35),
+              color: statusColor.withValues(alpha: 0.35),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: statusColor.withOpacity(0.12),
+                color: statusColor.withValues(alpha: 0.12),
                 blurRadius: 6,
                 offset: const Offset(0, 3),
               ),
@@ -520,7 +511,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                     boxShadow: widget.isOccupied
                         ? [
                             BoxShadow(
-                              color: statusColor.withOpacity(isDark ? 0.2 : 0.15),
+                              color: statusColor.withValues(alpha: isDark ? 0.2 : 0.15),
                               blurRadius: 12,
                               spreadRadius: 2,
                             ),
@@ -541,7 +532,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                             color: statusColor,
                             boxShadow: [
                               BoxShadow(
-                                color: statusColor.withOpacity(0.6),
+                                color: statusColor.withValues(alpha: 0.6),
                                 blurRadius: 5,
                                 spreadRadius: 1,
                               ),
@@ -559,7 +550,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                               height: 36,
                               decoration: BoxDecoration(
                                 color: widget.isOccupied
-                                    ? statusColor.withOpacity(0.15)
+                                    ? statusColor.withValues(alpha: 0.15)
                                     : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
                                 borderRadius: AppRadius.smBorder,
                               ),
@@ -659,7 +650,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
             boxShadow: widget.isOccupied
                 ? [
                     BoxShadow(
-                      color: statusColor.withOpacity(isDark ? 0.2 : 0.15),
+                      color: statusColor.withValues(alpha: isDark ? 0.2 : 0.15),
                       blurRadius: 12,
                       spreadRadius: 2,
                     ),
@@ -681,7 +672,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                     color: statusColor,
                     boxShadow: [
                       BoxShadow(
-                        color: statusColor.withOpacity(0.6),
+                        color: statusColor.withValues(alpha: 0.6),
                         blurRadius: 6,
                         spreadRadius: 1,
                       ),
@@ -706,7 +697,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                         height: 38,
                         decoration: BoxDecoration(
                           color: widget.isOccupied
-                              ? statusColor.withOpacity(0.15)
+                              ? statusColor.withValues(alpha: 0.15)
                               : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
                           borderRadius: AppRadius.smBorder,
                         ),
@@ -841,6 +832,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
                 pathParameters: {'orderId': widget.order!.id.toString()});
           }
         },
+        onPrint: () => _printTableOrder(context, db),
         onMarkFree: () async {
           Navigator.pop(ctx);
           if (widget.order != null) {
@@ -851,7 +843,7 @@ class _TableCardState extends ConsumerState<_TableCard> {
               for (final item in items) {
                 await db.restoreInventoryForOrderItem(
                   item.menuItemId,
-                  item.itemSize ?? 'full',
+                  item.itemSize,
                   item.quantity,
                 );
               }
@@ -874,6 +866,42 @@ class _TableCardState extends ConsumerState<_TableCard> {
       ),
     );
   }
+
+  Future<void> _printTableOrder(BuildContext context, AppDatabase db) async {
+    final order = widget.order;
+    if (order == null) return;
+
+    final items = await db.getOrderItems(order.id);
+    if (!context.mounted) return;
+    if (items.isEmpty) {
+      NbToast.show(context, 'There are no items to print', type: NbToastType.warning);
+      return;
+    }
+
+    final bill = await db.getBillForOrder(order.id);
+    if (!context.mounted) return;
+    final subtotal = items.fold<double>(
+      0,
+      (sum, item) => sum + item.itemPrice * item.quantity,
+    );
+
+    await showDialog<void>(
+      context: context,
+      builder: (_) => PrintPreviewDialog(
+        orderId: order.id,
+        tableNumber: widget.table.tableNumber,
+        title: bill == null ? 'Table Bill Preview' : 'Reprint Bill',
+        items: items,
+        subtotal: bill?.subtotal ?? subtotal,
+        discount: bill?.discount ?? 0,
+        total: bill?.total ?? subtotal,
+        paymentMethod: bill?.paymentMethod ?? 'cash',
+        cashReceived: bill?.amountReceived ?? 0,
+        change: bill?.change ?? 0,
+        billNumber: bill?.billNumber,
+      ),
+    );
+  }
 }
 
 class _TableContextMenu extends StatelessWidget {
@@ -882,6 +910,7 @@ class _TableContextMenu extends StatelessWidget {
   final bool isOccupied;
   final VoidCallback onViewOrder;
   final VoidCallback onViewBill;
+  final VoidCallback onPrint;
   final VoidCallback onMarkFree;
 
   const _TableContextMenu({
@@ -890,13 +919,14 @@ class _TableContextMenu extends StatelessWidget {
     required this.isOccupied,
     required this.onViewOrder,
     required this.onViewBill,
+    required this.onPrint,
     required this.onMarkFree,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(24),
+      padding: const EdgeInsets.all(24),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -909,7 +939,7 @@ class _TableContextMenu extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             isOccupied ? 'Occupied' : 'Available',
             style: GoogleFonts.inter(
@@ -917,7 +947,7 @@ class _TableContextMenu extends StatelessWidget {
               color: isOccupied ? AppColors.tableOccupied : AppColors.tableFree,
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           if (isOccupied) ...[
             _ActionTile(
               icon: Icons.receipt_long_rounded,
@@ -925,14 +955,21 @@ class _TableContextMenu extends StatelessWidget {
               color: AppColors.primary,
               onTap: onViewOrder,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             _ActionTile(
               icon: Icons.payment_rounded,
               label: 'Print & Pay Bill',
               color: AppColors.tableBilled,
               onTap: onViewBill,
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
+            _ActionTile(
+              icon: Icons.print_rounded,
+              label: 'Print Preview',
+              color: AppColors.info,
+              onTap: onPrint,
+            ),
+            const SizedBox(height: 8),
             if (order!.status == 'billed')
               _ActionTile(
                 icon: Icons.check_circle_outline_rounded,
@@ -954,7 +991,7 @@ class _TableContextMenu extends StatelessWidget {
               color: AppColors.success,
               onTap: onViewOrder,
             ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
       ),
     );
@@ -978,14 +1015,14 @@ class _ActionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: onTap,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      tileColor: color.withOpacity(0.08),
+      tileColor: color.withValues(alpha: 0.08),
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
+          color: color.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: color, size: 20),
@@ -997,46 +1034,4 @@ class _ActionTile extends StatelessWidget {
               color: AppColors.textPrimary)),
     );
   }
-}
-
-
-void _showAdminAccessDialog(BuildContext context, String targetRoute) async {
-  final prefs = await SharedPreferences.getInstance();
-  final correctPin = prefs.getString('admin_pin') ?? '9469';
-  
-  if (!context.mounted) return;
-
-  final tc = TextEditingController();
-  
-  showDialog(
-    context: context,
-    builder: (context) => NbDialog(
-      title: 'Admin Access',
-      customContent: NbInput(
-        controller: tc,
-        type: NbInputType.password,
-        hintText: 'Enter Admin PIN',
-        autofocus: true,
-        onSubmitted: () {
-          Navigator.pop(context);
-          if (tc.text == correctPin) {
-            context.pushNamed(targetRoute);
-          } else {
-            NbToast.show(context, 'Incorrect PIN', type: NbToastType.error);
-          }
-        },
-      ),
-      primaryButtonText: 'Submit',
-      onPrimary: () {
-        Navigator.pop(context);
-        if (tc.text == correctPin) {
-          context.pushNamed(targetRoute);
-        } else {
-          NbToast.show(context, 'Incorrect PIN', type: NbToastType.error);
-        }
-      },
-      secondaryButtonText: 'Cancel',
-      onSecondary: () => Navigator.pop(context),
-    ),
-  );
 }

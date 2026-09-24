@@ -1,16 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:fl_chart/fl_chart.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:file_picker/file_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
@@ -18,6 +13,11 @@ import 'package:nextbills/core/utils/formatters.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -159,7 +159,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     'T-${b.tableLabel}',
                     b.paymentMethod.toUpperCase(),
                     'Rs ${b.subtotal.toStringAsFixed(2)}',
-                    '- Rs ${(b.discount ?? 0.0).toStringAsFixed(2)}',
+                    '- Rs ${b.discount.toStringAsFixed(2)}',
                     'Rs ${b.total.toStringAsFixed(2)}',
                   ];
                 }).toList(),
@@ -225,7 +225,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
         if (!snap.hasData) {
           return Scaffold(
             backgroundColor: AppColors.bg,
-            appBar: NbAppBar(
+            appBar: const NbAppBar(
               title: 'Reports & Analytics',
               showBack: true,
             ),
@@ -328,7 +328,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                                   children: [
                                     Text(
                                       'Net Profit (Selected Period)',
-                                      style: TextStyle(color: Colors.white.withOpacity(0.85), fontSize: 13, fontWeight: FontWeight.bold),
+                                      style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 13, fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
@@ -337,7 +337,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                                     ),
                                     Text(
                                       'Sales: ${Fmt.currency(totalRevenue)}  •  COGS: ${Fmt.currency(totalCogs)}  •  Expenses: ${Fmt.currency(totalExpenses)}  •  Wastage: ${Fmt.currency(totalWastage)}',
-                                      style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 11),
+                                      style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 11),
                                     ),
                                   ],
                                 ),
@@ -395,38 +395,38 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
 
               // Revenue Chart
               if (bills.isNotEmpty && _dateRange.duration.inDays > 0) ...[
-                _SectionLabel('Revenue Trend'),
-                SizedBox(height: 12),
+                const _SectionLabel('Revenue Trend'),
+                const SizedBox(height: 12),
                 _RevenueChartCard(bills: bills, dateRange: _dateRange),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
               ],
 
               // Top Selling Items
               if (topSelling.isNotEmpty) ...[
-                _SectionLabel('Top Selling Items'),
-                SizedBox(height: 12),
+                const _SectionLabel('Top Selling Items'),
+                const SizedBox(height: 12),
                 _TopSellingCard(topSelling: topSelling, itemRevenues: itemRevenues),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
               ],
 
               // Payment Methods
               if (bills.isNotEmpty) ...[
-                _SectionLabel('Payment Methods'),
-                SizedBox(height: 12),
+                const _SectionLabel('Payment Methods'),
+                const SizedBox(height: 12),
                 _PaymentBreakdown(bills: bills),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
               ],
 
                           // Raw Order History
-                          _SectionLabel('Order History'),
-                          SizedBox(height: 12),
+                          const _SectionLabel('Order History'),
+                          const SizedBox(height: 12),
                           if (bills.isEmpty)
                             Center(
                               child: Padding(
                                 padding: const EdgeInsets.all(40),
                                 child: Column(
                                   children: [
-                                    Icon(Icons.history_rounded, size: 48, color: AppColors.textMuted.withOpacity(0.5)),
+                                    Icon(Icons.history_rounded, size: 48, color: AppColors.textMuted.withValues(alpha: 0.5)),
                                     const SizedBox(height: 12),
                                     Text('No revenue data for this range',
                                         style: GoogleFonts.inter(color: AppColors.textMuted)),
@@ -524,7 +524,7 @@ class _DateRangeHeader extends StatelessWidget {
     return Row(
       children: [
         Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 22),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(
           text,
           style: GoogleFonts.manrope(
@@ -554,14 +554,14 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(14),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.04),
+            color: color.withValues(alpha: 0.04),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -571,14 +571,14 @@ class _StatCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(6),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, color: color, size: 16),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             value,
             style: GoogleFonts.manrope(
@@ -587,7 +587,7 @@ class _StatCard extends StatelessWidget {
               color: AppColors.textPrimary,
             ),
           ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
           Text(
             label,
             style: GoogleFonts.inter(
@@ -636,7 +636,7 @@ class _RevenueChartCard extends StatelessWidget {
 
     return Container(
       height: 220,
-      padding: EdgeInsets.only(top: 24, right: 24, left: 12, bottom: 12),
+      padding: const EdgeInsets.only(top: 24, right: 24, left: 12, bottom: 12),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
@@ -649,22 +649,22 @@ class _RevenueChartCard extends StatelessWidget {
             drawVerticalLine: false,
             horizontalInterval: horizontalInterval < 1 ? 1 : horizontalInterval,
             getDrawingHorizontalLine: (value) => FlLine(
-              color: AppColors.border.withOpacity(0.5),
+              color: AppColors.border.withValues(alpha: 0.5),
               strokeWidth: 1,
               dashArray: [5, 5],
             ),
           ),
           titlesData: FlTitlesData(
             show: true,
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 22,
                 interval: (totalDays / 5).ceilToDouble(),
                 getTitlesWidget: (value, meta) {
-                  if (value.toInt() < 0 || value.toInt() >= totalDays) return SizedBox();
+                  if (value.toInt() < 0 || value.toInt() >= totalDays) return const SizedBox();
                   final d = dateRange.start.add(Duration(days: value.toInt()));
                   return Text(
                     '${d.day}/${d.month}',
@@ -702,7 +702,7 @@ class _RevenueChartCard extends StatelessWidget {
               dotData: FlDotData(show: totalDays <= 14),
               belowBarData: BarAreaData(
                 show: true,
-                color: AppColors.primary.withOpacity(0.15),
+                color: AppColors.primary.withValues(alpha: 0.15),
               ),
             ),
           ],
@@ -721,7 +721,7 @@ class _TopSellingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
@@ -734,7 +734,7 @@ class _TopSellingCard extends StatelessWidget {
           final revenue = itemRevenues[item.key] ?? 0.0;
           return ListTile(
             leading: CircleAvatar(
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               radius: 16,
               child: Text(
                 '#${index + 1}',
@@ -788,9 +788,9 @@ class _PaymentBreakdown extends StatelessWidget {
     return Row(
       children: [
         _PaymentChip('Cash', cashTotal, Icons.money_rounded, AppColors.success),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _PaymentChip('Card', cardTotal, Icons.credit_card_rounded, AppColors.info),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _PaymentChip('UPI', upiTotal, Icons.phone_android_rounded, const Color(0xFFF59E0B)),
       ],
     );
@@ -809,16 +809,16 @@ class _PaymentChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
             Icon(icon, color: color, size: 24),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
               Fmt.currencyShort(amount),
               style: GoogleFonts.manrope(
@@ -850,11 +850,11 @@ class _BillListItem extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.card,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) => Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -863,7 +863,7 @@ class _BillListItem extends StatelessWidget {
                 style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
             Text('${Fmt.date(bill.createdAt)} at ${Fmt.time(bill.createdAt)}', 
                 style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted)),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
@@ -871,7 +871,7 @@ class _BillListItem extends StatelessWidget {
                 itemBuilder: (context, i) {
                   final item = items[i];
                   return Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -899,7 +899,7 @@ class _BillListItem extends StatelessWidget {
                     style: GoogleFonts.manrope(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.primary)),
               ],
             ),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -918,8 +918,8 @@ class _BillListItem extends StatelessWidget {
     return GestureDetector(
       onTap: () => _showDetails(context),
       child: Container(
-        margin: EdgeInsets.only(bottom: 10),
-        padding: EdgeInsets.all(14),
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(16),
@@ -931,7 +931,7 @@ class _BillListItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.1),
+                color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -940,7 +940,7 @@ class _BillListItem extends StatelessWidget {
                 size: 22,
               ),
             ),
-            SizedBox(width: 14),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -997,7 +997,7 @@ class _SectionLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.only(left: 4),
       child: Text(
         text.toUpperCase(),
         style: GoogleFonts.manrope(

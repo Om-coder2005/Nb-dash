@@ -18,6 +18,7 @@ import 'package:nextbills/features/settings/settings_screen.dart';
 import 'package:nextbills/features/billing/billing_screen.dart';
 import 'package:nextbills/features/queue/screens/queue_screen.dart';
 import 'package:nextbills/features/auth/intro_screen.dart';
+import 'package:nextbills/features/kitchen/kitchen_display_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -99,6 +100,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/queue',
             name: 'queue',
             pageBuilder: (c, s) => _buildPage(c, s, const QueueScreen()),
+          ),
+          GoRoute(
+            path: '/kitchen',
+            name: 'kitchen',
+            pageBuilder: (c, s) => _buildPage(c, s, const KitchenDisplayScreen()),
           ),
           GoRoute(
             path: '/staff',

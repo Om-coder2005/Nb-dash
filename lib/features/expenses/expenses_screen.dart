@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:drift/drift.dart' hide Column, Row;
+import 'package:drift/drift.dart' hide Column;
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nextbills/app/theme.dart';
@@ -13,7 +13,6 @@ import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/core/utils/keyboard_helper.dart';
 
 class ExpensesScreen extends ConsumerStatefulWidget {
   const ExpensesScreen({super.key});
@@ -62,7 +61,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
           DateTime(_dateRange.end.year, _dateRange.end.month, _dateRange.end.day, 23, 59, 59),
         ),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return NbLoadingPulse();
+          if (!snapshot.hasData) return const NbLoadingPulse();
           final expensesList = snapshot.data!;
           final totalExpenses = expensesList.fold<double>(0.0, (s, e) => s + e.amount);
 
@@ -140,7 +139,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                               leading: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: _getCategoryColor(expense.category).withOpacity(0.15),
+                                  color: _getCategoryColor(expense.category).withValues(alpha: 0.15),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
@@ -229,7 +228,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: category,
+                          initialValue: category,
                           decoration: const InputDecoration(
                             labelText: 'Category',
                             border: OutlineInputBorder(),
@@ -247,7 +246,7 @@ class _ExpensesScreenState extends ConsumerState<ExpensesScreen> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: paymentMethod,
+                          initialValue: paymentMethod,
                           decoration: const InputDecoration(
                             labelText: 'Payment Method',
                             border: OutlineInputBorder(),

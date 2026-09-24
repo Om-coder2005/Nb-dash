@@ -60,7 +60,7 @@ class _NbCardState extends State<NbCard> {
     
     return [
       BoxShadow(
-        color: isDark ? Colors.black12 : Colors.black.withOpacity(0.04),
+        color: isDark ? Colors.black12 : Colors.black.withValues(alpha: 0.04),
         offset: const Offset(0, 2),
         blurRadius: 8,
       )
@@ -72,7 +72,7 @@ class _NbCardState extends State<NbCard> {
       return Border.all(color: AppColors.border, width: 1);
     }
     if (widget.style == NbCardStyle.flat) {
-      return Border.all(color: isDark ? Colors.transparent : Colors.black.withOpacity(0.03), width: 1);
+      return Border.all(color: isDark ? Colors.transparent : Colors.black.withValues(alpha: 0.03), width: 1);
     }
     return null;
   }
@@ -86,7 +86,7 @@ class _NbCardState extends State<NbCard> {
       curve: Curves.easeOutExpo,
       width: widget.width,
       height: widget.height,
-      padding: widget.padding ?? EdgeInsets.all(AppSpacing.lg), // 32px
+      padding: widget.padding ?? const EdgeInsets.all(AppSpacing.lg), // 32px
       decoration: BoxDecoration(
         color: widget.style == NbCardStyle.neumorphic ? AppColors.card : AppColors.surface,
         borderRadius: widget.shape == BoxShape.circle ? null : (widget.borderRadius ?? AppRadius.lgBorder), // 24px

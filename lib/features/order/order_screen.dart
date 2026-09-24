@@ -1,26 +1,22 @@
 import 'dart:convert';
+
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:drift/drift.dart' hide Column;
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
 import 'package:nextbills/core/providers/favorites_provider.dart';
 import 'package:nextbills/core/utils/formatters.dart';
-import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_empty_state.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_card.dart';
-import 'package:nextbills/shared/widgets/nb_loading.dart';
-import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
-import 'package:nextbills/shared/widgets/nb_dialog.dart';
 import 'package:nextbills/features/printer/printer_service.dart';
-
+import 'package:nextbills/shared/widgets/nb_app_bar.dart';
+import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_empty_state.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
+import 'package:nextbills/shared/widgets/nb_toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ─── PROVIDERS ───────────────────────────────────────
@@ -111,7 +107,10 @@ class _OrderScreenState extends ConsumerState<OrderScreen>
               )
             : null,
         actions: [
-          _KotButton(orderId: widget.orderId),
+          _KotButton(
+            orderId: widget.orderId,
+            tableNumber: _table?.tableNumber ?? 'T?',
+          ),
           PopupMenuButton<String>(
             icon: Icon(Icons.more_vert, color: AppColors.textPrimary),
             color: AppColors.card,
@@ -199,7 +198,7 @@ class _OrderScreenState extends ConsumerState<OrderScreen>
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.primary.withOpacity(0.4),
+                                  color: AppColors.primary.withValues(alpha: 0.4),
                                   blurRadius: 16,
                                   offset: const Offset(0, 6),
                                 ),
@@ -261,22 +260,11 @@ class _MenuPanel extends ConsumerStatefulWidget {
 
 class _MenuPanelState extends ConsumerState<_MenuPanel> {
   late final TextEditingController _searchController;
-  String _hotelName = 'NextBills';
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    _loadHotelName();
-  }
-
-  Future<void> _loadHotelName() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (mounted) {
-      setState(() {
-        _hotelName = prefs.getString('hotel_name') ?? 'NextBills';
-      });
-    }
   }
 
   @override
@@ -467,16 +455,6 @@ class _MenuPanelState extends ConsumerState<_MenuPanel> {
     );
   }
 
-  Widget _buildBannerStat(String val, String label) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(val, style: GoogleFonts.manrope(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-        Text(label, style: GoogleFonts.manrope(color: Colors.white70, fontSize: 10)),
-      ],
-    );
-  }
-
   Widget _buildLeftNormalPanel(List<MenuCategory> categories, int activeCat, String searchQuery) {
     return _UnifiedMenuScrollView(
       categories: categories,
@@ -616,7 +594,7 @@ class _UnifiedMenuScrollViewState extends ConsumerState<_UnifiedMenuScrollView> 
                               color: isSelected ? AppColors.primary : AppColors.surface,
                               borderRadius: BorderRadius.circular(24),
                               boxShadow: isSelected
-                                  ? [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
+                                  ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))]
                                   : AppShadows.neumorphic(Theme.of(context).brightness == Brightness.dark),
                             ),
                             child: Column(
@@ -627,7 +605,7 @@ class _UnifiedMenuScrollViewState extends ConsumerState<_UnifiedMenuScrollView> 
                                   height: 48,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: isSelected ? Colors.white.withOpacity(0.2) : AppColors.bg,
+                                    color: isSelected ? Colors.white.withValues(alpha: 0.2) : AppColors.bg,
                                   ),
                                   child: Center(
                                     child: leadingIcon,
@@ -750,7 +728,7 @@ class _UnifiedMenuScrollViewState extends ConsumerState<_UnifiedMenuScrollView> 
               icon: const Icon(Icons.close_rounded, size: 18),
               label: const Text('Cancel Search'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.error.withOpacity(0.1),
+                backgroundColor: AppColors.error.withValues(alpha: 0.1),
                 foregroundColor: AppColors.error,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 14),
@@ -782,7 +760,7 @@ class _MenuItemsList extends ConsumerWidget {
       future: db.getAllMenuItems(),
       builder: (context, snap) {
         if (!snap.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         var items = snap.data!.where((i) => i.isAvailable).toList();
         
@@ -809,13 +787,13 @@ class _MenuItemsList extends ConsumerWidget {
              );
           }
           if (categoryId == -1) {
-            return NbEmptyState(
+            return const NbEmptyState(
                icon: Icons.favorite_border_rounded,
                title: 'No favorites yet',
                message: 'Tap the heart icon on any item to add it here!',
              );
           }
-          return NbEmptyState(
+          return const NbEmptyState(
                icon: Icons.restaurant_menu_rounded,
                title: 'Empty category',
                message: 'No items in this category',
@@ -968,10 +946,6 @@ class _MenuItemCardState extends ConsumerState<_MenuItemCard> {
     final isFav = ref.watch(favoritesProvider).contains(widget.item.id);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Use a placeholder list based on id
-    final List<String> placeholders = ['🥗', '🍕', '🥩', '🥤', '🍔', '🍰'];
-    final emoji = placeholders[widget.item.id % placeholders.length];
-
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -993,7 +967,7 @@ class _MenuItemCardState extends ConsumerState<_MenuItemCard> {
                 color: _isHovered ? AppColors.primary : AppColors.surface,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: _isHovered
-                    ? [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 16, offset: const Offset(0, 8))]
+                    ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 16, offset: const Offset(0, 8))]
                     : AppShadows.neumorphic(isDark),
               ),
               child: Column(
@@ -1010,15 +984,6 @@ class _MenuItemCardState extends ConsumerState<_MenuItemCard> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '60 calories • 4 persons', // Dummy text to match UI
-                    style: GoogleFonts.manrope(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
-                      color: _isHovered ? Colors.white70 : AppColors.textMuted,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                   const Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1059,7 +1024,7 @@ class _MenuItemCardState extends ConsumerState<_MenuItemCard> {
                 height: 72,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.item.isVeg ? AppColors.success.withOpacity(0.1) : AppColors.error.withOpacity(0.1),
+                  color: widget.item.isVeg ? AppColors.success.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1),
                   boxShadow: AppShadows.lift(isDark),
                   border: Border.all(color: AppColors.surface, width: 4),
                 ),
@@ -1109,7 +1074,7 @@ class _MenuItemCardState extends ConsumerState<_MenuItemCard> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 4,
                       ),
                     ],
@@ -1278,7 +1243,7 @@ class _CartPanel extends ConsumerWidget {
                             margin: const EdgeInsets.only(right: 12),
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.warning.withOpacity(0.15),
+                              color: AppColors.warning.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -1308,7 +1273,7 @@ class _CartPanel extends ConsumerWidget {
               // Items list
               Expanded(
                 child: items.isEmpty
-                    ? NbEmptyState(
+                    ? const NbEmptyState(
                         icon: Icons.shopping_bag_outlined,
                         title: 'Cart is empty',
                         message: 'Tap items to add',
@@ -1329,7 +1294,7 @@ class _CartPanel extends ConsumerWidget {
                   color: AppColors.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: Colors.black.withValues(alpha: 0.03),
                       blurRadius: 10,
                       offset: const Offset(0, -5),
                     )
@@ -1446,7 +1411,7 @@ class _CartPanel extends ConsumerWidget {
                                 color: items.isNotEmpty ? AppColors.success : AppColors.surfaceDark,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: items.isNotEmpty 
-                                    ? [BoxShadow(color: AppColors.success.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 4))]
+                                    ? [BoxShadow(color: AppColors.success.withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))]
                                     : null,
                               ),
                               child: Center(
@@ -1480,50 +1445,56 @@ class _CartPanel extends ConsumerWidget {
     final newItems = items.where((i) => i.quantity > i.printedQuantity).toList();
     if (newItems.isEmpty) return;
 
-    // Save KOT record
-    final kotNumber = await db.getNextKotNumber();
-    final kotData = newItems.map((i) => {
-      'name': i.itemName,
-      'qty': i.quantity - i.printedQuantity,
-    }).toList();
-
-    await db.insertKotRecord(KotRecordsCompanion.insert(
+    await _sendKot(
+      context: context,
+      ref: ref,
+      db: db,
       orderId: orderId,
+      tableNumber: table?.tableNumber ?? 'T?',
+      items: newItems,
+    );
+  }
+}
+
+Future<void> _sendKot({
+  required BuildContext context,
+  required WidgetRef ref,
+  required AppDatabase db,
+  required int orderId,
+  required String tableNumber,
+  required List<OrderItem> items,
+}) async {
+  final newItems = items.where((i) => i.quantity > i.printedQuantity).toList();
+  if (newItems.isEmpty) return;
+
+  final kotNumber = await db.getNextKotNumber();
+  final kotData = newItems
+      .map((i) => {
+            'name': i.itemName,
+            'qty': i.quantity - i.printedQuantity,
+          })
+      .toList();
+
+  await db.insertKotRecord(KotRecordsCompanion.insert(
+    orderId: orderId,
+    kotNumber: kotNumber,
+    itemsJson: jsonEncode(kotData),
+    printedAt: DateTime.now(),
+  ));
+  await db.markKotSent(orderId);
+
+  try {
+    await ref.read(printerServiceProvider).printKot(
+      tableNumber: tableNumber,
       kotNumber: kotNumber,
-      itemsJson: jsonEncode(kotData),
-      printedAt: DateTime.now(),
-    ));
-    await db.markKotSent(orderId);
-
-    // Print
-    final printerService = ref.read(printerServiceProvider);
-    final tableName = table?.tableNumber ?? 'T?';
-    
-    try {
-      await printerService.printKot(
-        tableNumber: tableName,
-        kotNumber: kotNumber,
-        items: newItems.map((i) => {
-          'name': i.itemName,
-          'qty': i.quantity - i.printedQuantity,
-        }).toList(),
-      );
-
-      if (context.mounted) {
-        NbToast.show(
-          context, 
-          'KOT #$kotNumber sent to kitchen', 
-          type: NbToastType.success
-        );
-      }
-    } catch (e) {
-      if (context.mounted) {
-        NbToast.show(
-          context, 
-          'KOT saved but printer failed: $e', 
-          type: NbToastType.error
-        );
-      }
+      items: kotData,
+    );
+    if (context.mounted) {
+      NbToast.show(context, 'KOT #$kotNumber sent to kitchen', type: NbToastType.success);
+    }
+  } catch (e) {
+    if (context.mounted) {
+      NbToast.show(context, 'KOT saved but printer failed: $e', type: NbToastType.error);
     }
   }
 }
@@ -1566,10 +1537,10 @@ class _CartItem extends ConsumerWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isVeg ? AppColors.success.withOpacity(0.1) : AppColors.error.withOpacity(0.1),
+                    color: isVeg ? AppColors.success.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1),
                     image: hasImage
                         ? DecorationImage(
-                            image: MemoryImage(base64Decode(menuItem!.image!)),
+                            image: MemoryImage(base64Decode(menuItem.image!)),
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -1783,7 +1754,9 @@ class _CartItem extends ConsumerWidget {
 
 class _KotButton extends ConsumerWidget {
   final int orderId;
-  const _KotButton({required this.orderId});
+  final String tableNumber;
+
+  const _KotButton({required this.orderId, required this.tableNumber});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1791,14 +1764,23 @@ class _KotButton extends ConsumerWidget {
     return itemsAsync.when(
       data: (items) {
         final newCount = items.where((i) => i.quantity > i.printedQuantity).length;
-        if (newCount == 0) return SizedBox();
+        if (newCount == 0) return const SizedBox();
         return Container(
-          margin: EdgeInsets.only(right: 4),
+          margin: const EdgeInsets.only(right: 4),
           child: Stack(
             children: [
               IconButton(
-                icon: Icon(Icons.kitchen_rounded),
-                onPressed: null,
+                icon: const Icon(Icons.kitchen_rounded),
+                onPressed: () async {
+                  await _sendKot(
+                    context: context,
+                    ref: ref,
+                    db: ref.read(databaseProvider),
+                    orderId: orderId,
+                    tableNumber: tableNumber,
+                    items: items,
+                  );
+                },
                 tooltip: 'New items pending KOT',
               ),
               Positioned(
@@ -1807,14 +1789,14 @@ class _KotButton extends ConsumerWidget {
                 child: Container(
                   width: 16,
                   height: 16,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.error,
                   ),
                   child: Center(
                     child: Text(
                       '$newCount',
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 9,
                           color: Colors.white,
                           fontWeight: FontWeight.bold),
@@ -1826,8 +1808,8 @@ class _KotButton extends ConsumerWidget {
           ),
         );
       },
-      loading: () => SizedBox(),
-      error: (e, s) => SizedBox(),
+      loading: () => const SizedBox(),
+      error: (e, s) => const SizedBox(),
     );
   }
 }

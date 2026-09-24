@@ -2677,9 +2677,25 @@ class $KotRecordsTable extends KotRecords
   late final GeneratedColumn<DateTime> printedAt = GeneratedColumn<DateTime>(
       'printed_at', aliasedName, false,
       type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _kitchenStatusMeta =
+      const VerificationMeta('kitchenStatus');
+  @override
+  late final GeneratedColumn<String> kitchenStatus = GeneratedColumn<String>(
+      'kitchen_status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('new'));
+  static const VerificationMeta _kitchenUpdatedAtMeta =
+      const VerificationMeta('kitchenUpdatedAt');
+  @override
+  late final GeneratedColumn<DateTime> kitchenUpdatedAt = GeneratedColumn<DateTime>(
+      'kitchen_updated_at', aliasedName, true,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: null);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, orderId, kotNumber, itemsJson, printedAt];
+      [id, orderId, kotNumber, itemsJson, printedAt, kitchenStatus, kitchenUpdatedAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -2717,6 +2733,18 @@ class $KotRecordsTable extends KotRecords
     } else if (isInserting) {
       context.missing(_printedAtMeta);
     }
+    if (data.containsKey('kitchen_status')) {
+      context.handle(
+          _kitchenStatusMeta,
+          kitchenStatus.isAcceptableOrUnknown(
+              data['kitchen_status']!, _kitchenStatusMeta));
+    }
+    if (data.containsKey('kitchen_updated_at')) {
+      context.handle(
+          _kitchenUpdatedAtMeta,
+          kitchenUpdatedAt.isAcceptableOrUnknown(
+              data['kitchen_updated_at']!, _kitchenUpdatedAtMeta));
+    }
     return context;
   }
 
@@ -2736,6 +2764,10 @@ class $KotRecordsTable extends KotRecords
           .read(DriftSqlType.string, data['${effectivePrefix}items_json'])!,
       printedAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}printed_at'])!,
+      kitchenStatus: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}kitchen_status'])!,
+      kitchenUpdatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}kitchen_updated_at']),
     );
   }
 
@@ -2751,12 +2783,16 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
   final int kotNumber;
   final String itemsJson;
   final DateTime printedAt;
+  final String kitchenStatus;
+  final DateTime? kitchenUpdatedAt;
   const KotRecord(
       {required this.id,
       required this.orderId,
       required this.kotNumber,
       required this.itemsJson,
-      required this.printedAt});
+      required this.printedAt,
+      this.kitchenStatus = 'new',
+      this.kitchenUpdatedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -2765,6 +2801,10 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
     map['kot_number'] = Variable<int>(kotNumber);
     map['items_json'] = Variable<String>(itemsJson);
     map['printed_at'] = Variable<DateTime>(printedAt);
+    map['kitchen_status'] = Variable<String>(kitchenStatus);
+    if (kitchenUpdatedAt != null) {
+      map['kitchen_updated_at'] = Variable<DateTime>(kitchenUpdatedAt!);
+    }
     return map;
   }
 
@@ -2775,6 +2815,8 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
       kotNumber: Value(kotNumber),
       itemsJson: Value(itemsJson),
       printedAt: Value(printedAt),
+      kitchenStatus: Value(kitchenStatus),
+      kitchenUpdatedAt: Value(kitchenUpdatedAt),
     );
   }
 
@@ -2787,6 +2829,8 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
       kotNumber: serializer.fromJson<int>(json['kotNumber']),
       itemsJson: serializer.fromJson<String>(json['itemsJson']),
       printedAt: serializer.fromJson<DateTime>(json['printedAt']),
+      kitchenStatus: serializer.fromJson<String>(json['kitchenStatus'] ?? 'new'),
+      kitchenUpdatedAt: serializer.fromJson<DateTime?>(json['kitchenUpdatedAt']),
     );
   }
   @override
@@ -2798,6 +2842,8 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
       'kotNumber': serializer.toJson<int>(kotNumber),
       'itemsJson': serializer.toJson<String>(itemsJson),
       'printedAt': serializer.toJson<DateTime>(printedAt),
+      'kitchenStatus': serializer.toJson<String>(kitchenStatus),
+      'kitchenUpdatedAt': serializer.toJson<DateTime?>(kitchenUpdatedAt),
     };
   }
 
@@ -2806,13 +2852,17 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
           int? orderId,
           int? kotNumber,
           String? itemsJson,
-          DateTime? printedAt}) =>
+          DateTime? printedAt,
+          String? kitchenStatus,
+          DateTime? kitchenUpdatedAt}) =>
       KotRecord(
         id: id ?? this.id,
         orderId: orderId ?? this.orderId,
         kotNumber: kotNumber ?? this.kotNumber,
         itemsJson: itemsJson ?? this.itemsJson,
         printedAt: printedAt ?? this.printedAt,
+        kitchenStatus: kitchenStatus ?? this.kitchenStatus,
+        kitchenUpdatedAt: kitchenUpdatedAt ?? this.kitchenUpdatedAt,
       );
   KotRecord copyWithCompanion(KotRecordsCompanion data) {
     return KotRecord(
@@ -2821,6 +2871,8 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
       kotNumber: data.kotNumber.present ? data.kotNumber.value : this.kotNumber,
       itemsJson: data.itemsJson.present ? data.itemsJson.value : this.itemsJson,
       printedAt: data.printedAt.present ? data.printedAt.value : this.printedAt,
+      kitchenStatus: data.kitchenStatus.present ? data.kitchenStatus.value : this.kitchenStatus,
+      kitchenUpdatedAt: data.kitchenUpdatedAt.present ? data.kitchenUpdatedAt.value : this.kitchenUpdatedAt,
     );
   }
 
@@ -2831,13 +2883,15 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
           ..write('orderId: $orderId, ')
           ..write('kotNumber: $kotNumber, ')
           ..write('itemsJson: $itemsJson, ')
-          ..write('printedAt: $printedAt')
+          ..write('printedAt: $printedAt, ')
+          ..write('kitchenStatus: $kitchenStatus, ')
+          ..write('kitchenUpdatedAt: $kitchenUpdatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, orderId, kotNumber, itemsJson, printedAt);
+  int get hashCode => Object.hash(id, orderId, kotNumber, itemsJson, printedAt, kitchenStatus, kitchenUpdatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2846,7 +2900,9 @@ class KotRecord extends DataClass implements Insertable<KotRecord> {
           other.orderId == this.orderId &&
           other.kotNumber == this.kotNumber &&
           other.itemsJson == this.itemsJson &&
-          other.printedAt == this.printedAt);
+          other.printedAt == this.printedAt &&
+          other.kitchenStatus == this.kitchenStatus &&
+          other.kitchenUpdatedAt == this.kitchenUpdatedAt);
 }
 
 class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
@@ -2855,12 +2911,16 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
   final Value<int> kotNumber;
   final Value<String> itemsJson;
   final Value<DateTime> printedAt;
+  final Value<String> kitchenStatus;
+  final Value<DateTime?> kitchenUpdatedAt;
   const KotRecordsCompanion({
     this.id = const Value.absent(),
     this.orderId = const Value.absent(),
     this.kotNumber = const Value.absent(),
     this.itemsJson = const Value.absent(),
     this.printedAt = const Value.absent(),
+    this.kitchenStatus = const Value.absent(),
+    this.kitchenUpdatedAt = const Value.absent(),
   });
   KotRecordsCompanion.insert({
     this.id = const Value.absent(),
@@ -2868,6 +2928,8 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
     required int kotNumber,
     required String itemsJson,
     required DateTime printedAt,
+    this.kitchenStatus = const Value('new'),
+    this.kitchenUpdatedAt = const Value.absent(),
   })  : orderId = Value(orderId),
         kotNumber = Value(kotNumber),
         itemsJson = Value(itemsJson),
@@ -2878,6 +2940,8 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
     Expression<int>? kotNumber,
     Expression<String>? itemsJson,
     Expression<DateTime>? printedAt,
+    Expression<String>? kitchenStatus,
+    Expression<DateTime>? kitchenUpdatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2885,6 +2949,8 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
       if (kotNumber != null) 'kot_number': kotNumber,
       if (itemsJson != null) 'items_json': itemsJson,
       if (printedAt != null) 'printed_at': printedAt,
+      if (kitchenStatus != null) 'kitchen_status': kitchenStatus,
+      if (kitchenUpdatedAt != null) 'kitchen_updated_at': kitchenUpdatedAt,
     });
   }
 
@@ -2893,13 +2959,17 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
       Value<int>? orderId,
       Value<int>? kotNumber,
       Value<String>? itemsJson,
-      Value<DateTime>? printedAt}) {
+      Value<DateTime>? printedAt,
+      Value<String>? kitchenStatus,
+      Value<DateTime?>? kitchenUpdatedAt}) {
     return KotRecordsCompanion(
       id: id ?? this.id,
       orderId: orderId ?? this.orderId,
       kotNumber: kotNumber ?? this.kotNumber,
       itemsJson: itemsJson ?? this.itemsJson,
       printedAt: printedAt ?? this.printedAt,
+      kitchenStatus: kitchenStatus ?? this.kitchenStatus,
+      kitchenUpdatedAt: kitchenUpdatedAt ?? this.kitchenUpdatedAt,
     );
   }
 
@@ -2921,6 +2991,12 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
     if (printedAt.present) {
       map['printed_at'] = Variable<DateTime>(printedAt.value);
     }
+    if (kitchenStatus.present) {
+      map['kitchen_status'] = Variable<String>(kitchenStatus.value);
+    }
+    if (kitchenUpdatedAt.present) {
+      map['kitchen_updated_at'] = Variable<DateTime>(kitchenUpdatedAt.value!);
+    }
     return map;
   }
 
@@ -2931,7 +3007,9 @@ class KotRecordsCompanion extends UpdateCompanion<KotRecord> {
           ..write('orderId: $orderId, ')
           ..write('kotNumber: $kotNumber, ')
           ..write('itemsJson: $itemsJson, ')
-          ..write('printedAt: $printedAt')
+          ..write('printedAt: $printedAt, ')
+          ..write('kitchenStatus: $kitchenStatus, ')
+          ..write('kitchenUpdatedAt: $kitchenUpdatedAt')
           ..write(')'))
         .toString();
   }
@@ -3048,6 +3126,20 @@ class $BillsTable extends Bills with TableInfo<$BillsTable, Bill> {
   late final GeneratedColumn<int> billNumber = GeneratedColumn<int>(
       'bill_number', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
+    static const VerificationMeta _isSyncedMeta =
+      const VerificationMeta('isSynced');
+    @override
+    late final GeneratedColumn<bool> isSynced = GeneratedColumn<bool>(
+      'is_synced', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(false));
+    static const VerificationMeta _syncedAtMeta =
+      const VerificationMeta('syncedAt');
+    @override
+    late final GeneratedColumn<DateTime> syncedAt = GeneratedColumn<DateTime>(
+      'synced_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3064,7 +3156,9 @@ class $BillsTable extends Bills with TableInfo<$BillsTable, Bill> {
         splitOnline,
         itemsJson,
         createdAt,
-        billNumber
+        billNumber,
+        isSynced,
+        syncedAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3159,6 +3253,14 @@ class $BillsTable extends Bills with TableInfo<$BillsTable, Bill> {
           billNumber.isAcceptableOrUnknown(
               data['bill_number']!, _billNumberMeta));
     }
+    if (data.containsKey('is_synced')) {
+      context.handle(_isSyncedMeta,
+          isSynced.isAcceptableOrUnknown(data['is_synced']!, _isSyncedMeta));
+    }
+    if (data.containsKey('synced_at')) {
+      context.handle(_syncedAtMeta,
+          syncedAt.isAcceptableOrUnknown(data['synced_at']!, _syncedAtMeta));
+    }
     return context;
   }
 
@@ -3198,6 +3300,10 @@ class $BillsTable extends Bills with TableInfo<$BillsTable, Bill> {
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       billNumber: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}bill_number']),
+        isSynced: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_synced'])!,
+        syncedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}synced_at']),
     );
   }
 
@@ -3223,6 +3329,8 @@ class Bill extends DataClass implements Insertable<Bill> {
   final String itemsJson;
   final DateTime createdAt;
   final int? billNumber;
+  final bool isSynced;
+  final DateTime? syncedAt;
   const Bill(
       {required this.id,
       required this.orderId,
@@ -3238,7 +3346,9 @@ class Bill extends DataClass implements Insertable<Bill> {
       required this.splitOnline,
       required this.itemsJson,
       required this.createdAt,
-      this.billNumber});
+      this.billNumber,
+      this.isSynced = false,
+      this.syncedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -3258,6 +3368,10 @@ class Bill extends DataClass implements Insertable<Bill> {
     map['created_at'] = Variable<DateTime>(createdAt);
     if (!nullToAbsent || billNumber != null) {
       map['bill_number'] = Variable<int>(billNumber);
+    }
+    map['is_synced'] = Variable<bool>(isSynced);
+    if (!nullToAbsent || syncedAt != null) {
+      map['synced_at'] = Variable<DateTime>(syncedAt);
     }
     return map;
   }
@@ -3281,6 +3395,8 @@ class Bill extends DataClass implements Insertable<Bill> {
       billNumber: billNumber == null && nullToAbsent
           ? const Value.absent()
           : Value(billNumber),
+        isSynced: Value(isSynced),
+        syncedAt: Value(syncedAt),
     );
   }
 
@@ -3303,6 +3419,8 @@ class Bill extends DataClass implements Insertable<Bill> {
       itemsJson: serializer.fromJson<String>(json['itemsJson']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       billNumber: serializer.fromJson<int?>(json['billNumber']),
+      isSynced: serializer.fromJson<bool>(json['isSynced'] ?? false),
+      syncedAt: serializer.fromJson<DateTime?>(json['syncedAt']),
     );
   }
   @override
@@ -3324,6 +3442,8 @@ class Bill extends DataClass implements Insertable<Bill> {
       'itemsJson': serializer.toJson<String>(itemsJson),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'billNumber': serializer.toJson<int?>(billNumber),
+      'isSynced': serializer.toJson<bool>(isSynced),
+      'syncedAt': serializer.toJson<DateTime?>(syncedAt),
     };
   }
 
@@ -3342,7 +3462,9 @@ class Bill extends DataClass implements Insertable<Bill> {
           double? splitOnline,
           String? itemsJson,
           DateTime? createdAt,
-          Value<int?> billNumber = const Value.absent()}) =>
+          Value<int?> billNumber = const Value.absent(),
+          bool? isSynced,
+          Value<DateTime?> syncedAt = const Value.absent()}) =>
       Bill(
         id: id ?? this.id,
         orderId: orderId ?? this.orderId,
@@ -3359,6 +3481,8 @@ class Bill extends DataClass implements Insertable<Bill> {
         itemsJson: itemsJson ?? this.itemsJson,
         createdAt: createdAt ?? this.createdAt,
         billNumber: billNumber.present ? billNumber.value : this.billNumber,
+        isSynced: isSynced ?? this.isSynced,
+        syncedAt: syncedAt.present ? syncedAt.value : this.syncedAt,
       );
   Bill copyWithCompanion(BillsCompanion data) {
     return Bill(
@@ -3384,6 +3508,8 @@ class Bill extends DataClass implements Insertable<Bill> {
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       billNumber:
           data.billNumber.present ? data.billNumber.value : this.billNumber,
+        isSynced: data.isSynced.present ? data.isSynced.value : this.isSynced,
+        syncedAt: data.syncedAt.present ? data.syncedAt.value : this.syncedAt,
     );
   }
 
@@ -3404,7 +3530,9 @@ class Bill extends DataClass implements Insertable<Bill> {
           ..write('splitOnline: $splitOnline, ')
           ..write('itemsJson: $itemsJson, ')
           ..write('createdAt: $createdAt, ')
-          ..write('billNumber: $billNumber')
+          ..write('billNumber: $billNumber, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }
@@ -3425,7 +3553,9 @@ class Bill extends DataClass implements Insertable<Bill> {
       splitOnline,
       itemsJson,
       createdAt,
-      billNumber);
+      billNumber,
+      isSynced,
+      syncedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3444,7 +3574,9 @@ class Bill extends DataClass implements Insertable<Bill> {
           other.splitOnline == this.splitOnline &&
           other.itemsJson == this.itemsJson &&
           other.createdAt == this.createdAt &&
-          other.billNumber == this.billNumber);
+          other.billNumber == this.billNumber &&
+          other.isSynced == this.isSynced &&
+          other.syncedAt == this.syncedAt);
 }
 
 class BillsCompanion extends UpdateCompanion<Bill> {
@@ -3463,6 +3595,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
   final Value<String> itemsJson;
   final Value<DateTime> createdAt;
   final Value<int?> billNumber;
+  final Value<bool> isSynced;
+  final Value<DateTime?> syncedAt;
   const BillsCompanion({
     this.id = const Value.absent(),
     this.orderId = const Value.absent(),
@@ -3479,6 +3613,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
     this.itemsJson = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.billNumber = const Value.absent(),
+    this.isSynced = const Value.absent(),
+    this.syncedAt = const Value.absent(),
   });
   BillsCompanion.insert({
     this.id = const Value.absent(),
@@ -3496,6 +3632,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
     required String itemsJson,
     required DateTime createdAt,
     this.billNumber = const Value.absent(),
+    this.isSynced = const Value(false),
+    this.syncedAt = const Value.absent(),
   })  : orderId = Value(orderId),
         tableId = Value(tableId),
         tableLabel = Value(tableLabel),
@@ -3519,6 +3657,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
     Expression<String>? itemsJson,
     Expression<DateTime>? createdAt,
     Expression<int>? billNumber,
+    Expression<bool>? isSynced,
+    Expression<DateTime>? syncedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3536,6 +3676,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
       if (itemsJson != null) 'items_json': itemsJson,
       if (createdAt != null) 'created_at': createdAt,
       if (billNumber != null) 'bill_number': billNumber,
+      if (isSynced != null) 'is_synced': isSynced,
+      if (syncedAt != null) 'synced_at': syncedAt,
     });
   }
 
@@ -3554,7 +3696,9 @@ class BillsCompanion extends UpdateCompanion<Bill> {
       Value<double>? splitOnline,
       Value<String>? itemsJson,
       Value<DateTime>? createdAt,
-      Value<int?>? billNumber}) {
+      Value<int?>? billNumber,
+      Value<bool>? isSynced,
+      Value<DateTime?>? syncedAt}) {
     return BillsCompanion(
       id: id ?? this.id,
       orderId: orderId ?? this.orderId,
@@ -3571,6 +3715,8 @@ class BillsCompanion extends UpdateCompanion<Bill> {
       itemsJson: itemsJson ?? this.itemsJson,
       createdAt: createdAt ?? this.createdAt,
       billNumber: billNumber ?? this.billNumber,
+      isSynced: isSynced ?? this.isSynced,
+      syncedAt: syncedAt ?? this.syncedAt,
     );
   }
 
@@ -3622,6 +3768,12 @@ class BillsCompanion extends UpdateCompanion<Bill> {
     if (billNumber.present) {
       map['bill_number'] = Variable<int>(billNumber.value);
     }
+    if (isSynced.present) {
+      map['is_synced'] = Variable<bool>(isSynced.value);
+    }
+    if (syncedAt.present) {
+      map['synced_at'] = Variable<DateTime>(syncedAt.value);
+    }
     return map;
   }
 
@@ -3642,7 +3794,9 @@ class BillsCompanion extends UpdateCompanion<Bill> {
           ..write('splitOnline: $splitOnline, ')
           ..write('itemsJson: $itemsJson, ')
           ..write('createdAt: $createdAt, ')
-          ..write('billNumber: $billNumber')
+          ..write('billNumber: $billNumber, ')
+          ..write('isSynced: $isSynced, ')
+          ..write('syncedAt: $syncedAt')
           ..write(')'))
         .toString();
   }

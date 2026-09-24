@@ -3,14 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
-import 'package:nextbills/features/printer/sound_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final _pinProvider = StateProvider<String>((ref) => '');
-final _shakeProvider = StateProvider<bool>((ref) => false);
 
 class PinScreen extends ConsumerStatefulWidget {
   const PinScreen({super.key});
@@ -250,7 +247,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.topCenter,
             radius: 1.5,
@@ -262,7 +259,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: isTablet ? 400 : double.infinity),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -296,7 +293,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
+                              color: AppColors.primary.withValues(alpha: 0.4),
                               blurRadius: 24,
                               spreadRadius: 4,
                             ),
@@ -379,7 +376,7 @@ class _PinScreenState extends ConsumerState<PinScreen>
                                     boxShadow: filled
                                         ? [
                                             BoxShadow(
-                                              color: AppColors.primary.withOpacity(0.5),
+                                              color: AppColors.primary.withValues(alpha: 0.5),
                                               blurRadius: 8,
                                               spreadRadius: 1,
                                             ),
@@ -433,12 +430,12 @@ class _PinScreenState extends ConsumerState<PinScreen>
     return Column(
       children: buttons.map((row) {
         return Padding(
-          padding: EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(vertical: 6),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: row.map((digit) {
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: _NumButton(
                   label: digit,
                   onTap: digit.isEmpty
@@ -464,7 +461,7 @@ class _NumButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (label.isEmpty) return SizedBox(width: 80, height: 80);
+    if (label.isEmpty) return const SizedBox(width: 80, height: 80);
 
     final isDel = label == 'del';
 

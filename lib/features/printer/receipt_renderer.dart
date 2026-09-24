@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:qr/qr.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'esc_pos_printer.dart';
 
 class ReceiptRenderer {
@@ -398,9 +398,9 @@ class ReceiptRenderer {
     String? footer,
     int paperWidth = 80,
   }) async {
-    final double scale = 2.0; // 2.0x scale factor for sharper GDI text/layout rendering
+    const double scale = 2.0; // 2.0x scale factor for sharper GDI text/layout rendering
     final double width = (paperWidth == 80 ? 576.0 : 384.0) * scale;
-    final double padding = 16.0 * scale;
+    const double padding = 16.0 * scale;
     final double contentWidth = width - (padding * 2);
 
     // Decode logo if present
@@ -561,7 +561,7 @@ class ReceiptRenderer {
           
           final qrCode = QrCode.fromData(data: upiUri, errorCorrectLevel: QrErrorCorrectLevel.M);
           final qrImage = QrImage(qrCode);
-          final double moduleSize = 4.0 * scale;
+          const double moduleSize = 4.0 * scale;
           final double qrPixelSize = qrImage.moduleCount * moduleSize;
 
           y += 4 * scale;
@@ -684,9 +684,9 @@ class ReceiptRenderer {
     required List<Map<String, dynamic>> items,
     int paperWidth = 80,
   }) async {
-    final double scale = 2.0;
+    const double scale = 2.0;
     final double width = (paperWidth == 80 ? 576.0 : 384.0) * scale;
-    final double padding = 16.0 * scale;
+    const double padding = 16.0 * scale;
     final double contentWidth = width - (padding * 2);
 
     double measureHeight(Canvas? canvas) {

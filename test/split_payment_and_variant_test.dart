@@ -6,7 +6,7 @@ void main() {
     test('Standard split payment: Total 500, Cash 200 => Online 300', () {
       const double total = 500.0;
       const double cashInput = 200.0;
-      final double splitCash = cashInput;
+      const double splitCash = cashInput;
       final double splitOnline = (total - splitCash).clamp(0.0, total);
 
       expect(splitCash, equals(200.0));
@@ -17,7 +17,7 @@ void main() {
     test('Edge case: Cash input exceeds Total (Overpayment)', () {
       const double total = 500.0;
       const double cashInput = 600.0;
-      final double splitCash = cashInput;
+      const double splitCash = cashInput;
       final double splitOnline = (total - splitCash).clamp(0.0, total);
       final double change = (cashInput - total).clamp(0.0, double.infinity);
 
@@ -29,7 +29,7 @@ void main() {
     test('Edge case: Cash input is 0 (Full Online via Split)', () {
       const double total = 350.0;
       const double cashInput = 0.0;
-      final double splitCash = cashInput;
+      const double splitCash = cashInput;
       final double splitOnline = (total - splitCash).clamp(0.0, total);
 
       expect(splitCash, equals(0.0));

@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
 import 'windows_printer_service.dart';
 
 enum PrinterConnectionType { usb, network, bluetooth, serial, unknown }
@@ -34,7 +36,6 @@ class ScannedPrinterDevice {
       case PrinterConnectionType.serial:
         return 'Serial';
       case PrinterConnectionType.unknown:
-      default:
         return 'Unknown';
     }
   }

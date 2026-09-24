@@ -1,19 +1,17 @@
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/core/database/database.dart';
 import 'package:nextbills/core/providers/database_provider.dart';
 import 'package:nextbills/core/utils/formatters.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
-import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_dialog.dart';
+import 'package:nextbills/shared/widgets/nb_input.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
-import 'package:drift/drift.dart' hide Column;
 
 
 class StaffScreen extends ConsumerStatefulWidget {
@@ -53,7 +51,7 @@ class _StaffScreenState extends ConsumerState<StaffScreen>
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textMuted,
           labelStyle: GoogleFonts.manrope(fontWeight: FontWeight.w600, fontSize: 13),
-          tabs: [
+          tabs: const [
             Tab(text: 'Attendance', icon: Icon(Icons.calendar_today_rounded, size: 18)),
             Tab(text: 'Payroll', icon: Icon(Icons.payments_rounded, size: 18)),
             Tab(text: 'Employees', icon: Icon(Icons.people_rounded, size: 18)),
@@ -98,7 +96,7 @@ class _AttendanceTabState extends ConsumerState<_AttendanceTab> {
       children: [
         // Date Selector Bar
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: AppColors.surface,
             border: Border(bottom: BorderSide(color: AppColors.border)),
@@ -127,7 +125,7 @@ class _AttendanceTabState extends ConsumerState<_AttendanceTab> {
                 child: Row(
                   children: [
                     Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 18),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       DateFormat('EEE, d MMMM yyyy').format(_selectedDate),
                       style: GoogleFonts.manrope(
@@ -165,7 +163,7 @@ class _AttendanceTabState extends ConsumerState<_AttendanceTab> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.people_outline_rounded, size: 48, color: AppColors.textMuted),
-                          SizedBox(height: 12),
+                          const SizedBox(height: 12),
                           Text('No staff members added yet.', style: GoogleFonts.inter(color: AppColors.textMuted)),
                         ],
                       ),
@@ -179,19 +177,19 @@ class _AttendanceTabState extends ConsumerState<_AttendanceTab> {
                       final attendanceMap = {for (var a in attendanceList) a.staffId: a};
 
                       return ListView.builder(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         itemCount: categories.length,
                         itemBuilder: (context, catIdx) {
                           final category = categories[catIdx];
                           final catStaff = staffList.where((s) => s.categoryId == category.id).toList();
 
-                          if (catStaff.isEmpty) return SizedBox();
+                          if (catStaff.isEmpty) return const SizedBox();
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(top: 8, bottom: 12, left: 4),
+                                padding: const EdgeInsets.only(top: 8, bottom: 12, left: 4),
                                 child: Text(
                                   category.name.toUpperCase(),
                                   style: GoogleFonts.manrope(
@@ -265,8 +263,8 @@ class _AttendanceStaffCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      padding: EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(14),
@@ -288,7 +286,7 @@ class _AttendanceStaffCard extends StatelessWidget {
                         color: AppColors.textPrimary,
                       ),
                     ),
-                    SizedBox(height: 2),
+                    const SizedBox(height: 2),
                     Text(
                       staff.payType == 'monthly'
                           ? 'Monthly: ${Fmt.currencyShort(staff.monthlySalary)}'
@@ -311,7 +309,7 @@ class _AttendanceStaffCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           // Status buttons row
           Row(
             children: [
@@ -321,21 +319,21 @@ class _AttendanceStaffCard extends StatelessWidget {
                 isActive: status == 'present',
                 onTap: () => onStatusChanged('present'),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               _StatusButton(
                 label: 'Present/2',
                 activeColor: AppColors.warning,
                 isActive: status == 'half_day',
                 onTap: () => onStatusChanged('half_day'),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               _StatusButton(
                 label: 'Absent',
                 activeColor: AppColors.error,
                 isActive: status == 'absent',
                 onTap: () => onStatusChanged('absent'),
               ),
-              SizedBox(width: 6),
+              const SizedBox(width: 6),
               _StatusButton(
                 label: 'Holiday',
                 activeColor: AppColors.info,
@@ -345,7 +343,7 @@ class _AttendanceStaffCard extends StatelessWidget {
             ],
           ),
           if (notes.isNotEmpty) ...[
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -406,9 +404,9 @@ class _StatusButton extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isActive ? activeColor.withOpacity(0.15) : AppColors.surface,
+            color: isActive ? activeColor.withValues(alpha: 0.15) : AppColors.surface,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isActive ? activeColor : AppColors.border,
@@ -455,7 +453,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
       children: [
         // Month/Year Selector
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: AppColors.surface,
             border: Border(bottom: BorderSide(color: AppColors.border)),
@@ -476,7 +474,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
                   });
                 },
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Text(
                 '${DateFormat('MMMM').format(DateTime(_selectedYear, _selectedMonth))} $_selectedYear',
                 style: GoogleFonts.manrope(
@@ -485,7 +483,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
                   color: AppColors.textPrimary,
                 ),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               IconButton(
                 icon: Icon(Icons.chevron_right_rounded, color: AppColors.textPrimary),
                 onPressed: () {
@@ -513,7 +511,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
                 loading: () => const Center(child: NbLoadingPulse()),
                 error: (err, _) => Center(child: Text('Error: $err')),
                 data: (categories) {
-                  if (staffList.isEmpty) return Center(child: Text('No staff members.'));
+                  if (staffList.isEmpty) return const Center(child: Text('No staff members.'));
 
                   final catMap = {for (var c in categories) c.id: c};
 
@@ -524,7 +522,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
                       final paymentsMap = {for (var p in payments) p.staffId: p};
 
                       return ListView.builder(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         itemCount: staffList.length,
                         itemBuilder: (context, idx) {
                           final staff = staffList[idx];
@@ -651,7 +649,7 @@ class _PayrollTabState extends ConsumerState<_PayrollTab> {
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColors.card,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) => _PayrollDetailsSheet(
@@ -697,9 +695,9 @@ class _PayrollStaffTile extends StatelessWidget {
     final pending = (calculatedSalary - paid).clamp(0.0, double.infinity);
     if (paid == 0) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: AppColors.error.withOpacity(0.12),
+          color: AppColors.error.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -713,9 +711,9 @@ class _PayrollStaffTile extends StatelessWidget {
       );
     } else if (pending > 0.01) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: AppColors.warning.withOpacity(0.12),
+          color: AppColors.warning.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -729,9 +727,9 @@ class _PayrollStaffTile extends StatelessWidget {
       );
     } else {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: AppColors.success.withOpacity(0.12),
+          color: AppColors.success.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -749,7 +747,7 @@ class _PayrollStaffTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(12),
@@ -757,7 +755,7 @@ class _PayrollStaffTile extends StatelessWidget {
       ),
       child: ListTile(
         onTap: onTap,
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         title: Row(
           children: [
             Expanded(
@@ -770,7 +768,7 @@ class _PayrollStaffTile extends StatelessWidget {
           ],
         ),
         subtitle: Padding(
-          padding: EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: 4),
           child: Text(
             '${present}P • ${halfDay}H/2 • ${absent}A • ${holiday}H',
             style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
@@ -919,7 +917,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               'Remaining Balance: ${Fmt.currency(remaining)}',
               style: GoogleFonts.inter(color: AppColors.warning, fontSize: 13, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             NbInput(
               controller: controller,
               type: NbInputType.number,
@@ -994,9 +992,9 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               ),
               if (isPaid)
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.12),
+                    color: AppColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -1006,7 +1004,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                 ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Divider(color: AppColors.border),
 
           // Attendance Counts Row
@@ -1019,7 +1017,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               _CountStat('Holiday', '${widget.holiday}', AppColors.info),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Divider(color: AppColors.border),
 
           // Holiday policy switch
@@ -1035,13 +1033,13 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted),
             ),
             value: _holidaysUnpaid,
-            activeColor: AppColors.primary,
+            activeThumbColor: AppColors.primary,
             contentPadding: EdgeInsets.zero,
             onChanged: (val) {
               setState(() => _holidaysUnpaid = val);
             },
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
 
           // Bonus & Deduction inputs
           Row(
@@ -1060,7 +1058,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                   },
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: TextField(
                   controller: _deductionsController,
@@ -1077,7 +1075,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
 
           // Payment notes
           TextField(
@@ -1088,11 +1086,11 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
             ),
             style: TextStyle(color: AppColors.textPrimary),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Computation summary block
           Container(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(14),
@@ -1107,7 +1105,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                       : '${widget.present + (widget.holiday)} Days @ ${Fmt.currencyShort(widget.staff.payRate > 0 ? widget.staff.payRate : (widget.category?.defaultDailyRate ?? 0.0))}',
                 ),
                 if (widget.staff.payType == 'monthly' && (widget.absent > 0 || widget.halfDay > 0 || (_holidaysUnpaid && widget.holiday > 0))) ...[
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _ComputeFormula(
                     label: 'Absence Deductions',
                     value: '- ${Fmt.currencyShort(_calculateAbsenceDeductions())}',
@@ -1115,7 +1113,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                   ),
                 ],
                 if (_bonus > 0) ...[
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _ComputeFormula(
                     label: 'Bonus',
                     value: '+ ${Fmt.currencyShort(_bonus)}',
@@ -1123,7 +1121,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                   ),
                 ],
                 if (_deductions > 0) ...[
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   _ComputeFormula(
                     label: 'Other Deductions',
                     value: '- ${Fmt.currencyShort(_deductions)}',
@@ -1144,7 +1142,7 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
               ],
             ),
           ),
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
 
           // Payment buttons
           Row(
@@ -1172,10 +1170,10 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                     ));
                     if (context.mounted) Navigator.pop(context);
                   },
-                  child: Text('Save Computations'),
+                  child: const Text('Save Computations'),
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: isPaid
@@ -1185,10 +1183,10 @@ class _PayrollDetailsSheetState extends ConsumerState<_PayrollDetailsSheet> {
                           final remaining = (calculated - alreadyPaid).clamp(0.0, double.infinity);
                           _showPaymentDialog(context, remaining, alreadyPaid, calculated, db);
                         },
-                  icon: Icon(Icons.payment_rounded, size: 18, color: Colors.black),
+                  icon: const Icon(Icons.payment_rounded, size: 18, color: Colors.black),
                   label: Text(
                     (widget.savedPayment?.paidAmount ?? 0.0) > 0 ? 'Pay Remaining' : 'Pay Salary',
-                    style: TextStyle(color: Colors.black),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -1287,11 +1285,11 @@ class _EmployeesTab extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: staffAsync.when(
-        loading: () => Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('Error: $err')),
         data: (staffList) {
           return categoriesAsync.when(
-            loading: () => Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (err, _) => Center(child: Text('Error: $err')),
             data: (categories) {
               if (categories.isEmpty) {
@@ -1300,7 +1298,7 @@ class _EmployeesTab extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.badge_outlined, size: 48, color: AppColors.textMuted),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(
                         'Please create a Staff Category first.',
                         style: GoogleFonts.inter(color: AppColors.textMuted),
@@ -1318,45 +1316,141 @@ class _EmployeesTab extends ConsumerWidget {
 
               final catMap = {for (var c in categories) c.id: c.name};
 
-              return ListView.builder(
-                padding: EdgeInsets.all(16),
-                itemCount: staffList.length,
-                itemBuilder: (context, idx) {
-                  final staff = staffList[idx];
-                  return Card(
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Container(
+                  decoration: BoxDecoration(
                     color: AppColors.card,
-                    margin: EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: AppColors.border),
-                    ),
-                    child: ListTile(
-                      onTap: () => _showEmployeeAttendanceHistory(context, ref, staff, categories),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                      title: Text(
-                        staff.name,
-                        style: GoogleFonts.manrope(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 14),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Employees',
+                                    style: GoogleFonts.manrope(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w800,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${staffList.length} active team member${staffList.length == 1 ? '' : 's'}',
+                                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+                              decoration: BoxDecoration(
+                                color: AppColors.success.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.circle, size: 8, color: AppColors.success),
+                                  const SizedBox(width: 6),
+                                  Text('Active', style: GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.success)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      subtitle: Text(
-                        'Category: ${catMap[staff.categoryId] ?? '-'} • Phone: ${staff.phone}',
-                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit_rounded, color: AppColors.textMuted, size: 20),
-                            onPressed: () => _addEditStaffDialog(context, ref, categories, existing: staff),
+                      Divider(height: 1, color: AppColors.border),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: DataTable(
+                          headingRowHeight: 44,
+                          dataRowMinHeight: 64,
+                          dataRowMaxHeight: 72,
+                          horizontalMargin: 20,
+                          columnSpacing: 28,
+                          headingTextStyle: GoogleFonts.manrope(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.textMuted,
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
-                            onPressed: () => _confirmDeleteStaff(context, db, staff),
+                          dataTextStyle: GoogleFonts.inter(
+                            fontSize: 12,
+                            color: AppColors.textPrimary,
                           ),
-                        ],
+                          columns: const [
+                            DataColumn(label: Text('EMPLOYEE')),
+                            DataColumn(label: Text('ROLE')),
+                            DataColumn(label: Text('CONTACT')),
+                            DataColumn(label: Text('PAY STRUCTURE')),
+                            DataColumn(label: Text('JOINED')),
+                            DataColumn(label: Text('ACTIONS')),
+                          ],
+                          rows: staffList.map((staff) {
+                            final role = catMap[staff.categoryId] ?? '-';
+                            final pay = staff.payType == 'monthly'
+                                ? 'Monthly  ${Fmt.currency(staff.monthlySalary)}'
+                                : 'Daily  ${Fmt.currency(staff.payRate)}';
+                            return DataRow(
+                              onSelectChanged: (_) => _showEmployeeAttendanceHistory(context, ref, staff, categories),
+                              cells: [
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 17,
+                                        backgroundColor: AppColors.primary.withValues(alpha: 0.12),
+                                        child: Text(
+                                          staff.name.isEmpty ? '?' : staff.name[0].toUpperCase(),
+                                          style: GoogleFonts.manrope(fontWeight: FontWeight.w800, color: AppColors.primary),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(staff.name, style: GoogleFonts.manrope(fontWeight: FontWeight.w700)),
+                                    ],
+                                  ),
+                                ),
+                                DataCell(Text(role)),
+                                DataCell(Text(staff.phone.isEmpty ? 'Not provided' : staff.phone)),
+                                DataCell(Text(pay)),
+                                DataCell(Text(DateFormat('d MMM yyyy').format(staff.joiningDate))),
+                                DataCell(
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        tooltip: 'Edit employee',
+                                        icon: const Icon(Icons.edit_rounded, size: 19),
+                                        color: AppColors.textMuted,
+                                        onPressed: () => _addEditStaffDialog(context, ref, categories, existing: staff),
+                                      ),
+                                      IconButton(
+                                        tooltip: 'Delete employee',
+                                        icon: const Icon(Icons.delete_outline_rounded, size: 19),
+                                        color: AppColors.error,
+                                        onPressed: () => _confirmDeleteStaff(context, db, staff),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    ],
+                  ),
+                ),
               );
             },
           );
@@ -1367,7 +1461,7 @@ class _EmployeesTab extends ConsumerWidget {
             ? FloatingActionButton(
                 onPressed: () => _addEditStaffDialog(context, ref, categories),
                 backgroundColor: AppColors.primary,
-                child: Icon(Icons.add, color: Colors.black),
+                child: const Icon(Icons.add, color: Colors.black),
               )
             : null,
         orElse: () => null,
@@ -1407,16 +1501,16 @@ class _EmployeesTab extends ConsumerWidget {
                   decoration: const InputDecoration(labelText: 'Full Name'),
                   style: TextStyle(color: AppColors.textPrimary),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
                   decoration: const InputDecoration(labelText: 'Phone Number'),
                   style: TextStyle(color: AppColors.textPrimary),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
-                  value: selectedCategoryId,
+                  initialValue: selectedCategoryId,
                   dropdownColor: AppColors.card,
                   decoration: const InputDecoration(labelText: 'Category'),
                   style: TextStyle(color: AppColors.textPrimary),
@@ -1427,13 +1521,13 @@ class _EmployeesTab extends ConsumerWidget {
                     if (val != null) setDialogState(() => selectedCategoryId = val);
                   },
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 DropdownButtonFormField<String>(
-                  value: payType,
+                  initialValue: payType,
                   dropdownColor: AppColors.card,
                   decoration: const InputDecoration(labelText: 'Wage Type'),
                   style: TextStyle(color: AppColors.textPrimary),
-                  items: [
+                  items: const [
                     DropdownMenuItem(value: 'daily', child: Text('Daily Wage')),
                     DropdownMenuItem(value: 'monthly', child: Text('Monthly Salary')),
                   ],
@@ -1441,7 +1535,7 @@ class _EmployeesTab extends ConsumerWidget {
                     if (val != null) setDialogState(() => payType = val);
                   },
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 if (payType == 'monthly')
                   TextField(
                     controller: salaryController,
@@ -1456,7 +1550,7 @@ class _EmployeesTab extends ConsumerWidget {
                     decoration: const InputDecoration(labelText: 'Present Day Rate Override (Rs)'),
                     style: TextStyle(color: AppColors.textPrimary),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   TextField(
                     controller: halfDayRateController,
                     keyboardType: TextInputType.number,
@@ -1521,12 +1615,12 @@ class _EmployeesTab extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: Text('Delete Employee?'),
+        title: const Text('Delete Employee?'),
         content: Text('This will delete all records for ${staff.name}. This action cannot be undone.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1534,7 +1628,7 @@ class _EmployeesTab extends ConsumerWidget {
               if (ctx.mounted) Navigator.pop(ctx);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -1557,7 +1651,7 @@ class _CategoriesTab extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: categoriesAsync.when(
-        loading: () => Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('Error: $err')),
         data: (categories) {
           if (categories.isEmpty) {
@@ -1567,19 +1661,19 @@ class _CategoriesTab extends ConsumerWidget {
           }
 
           return ListView.builder(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             itemCount: categories.length,
             itemBuilder: (context, idx) {
               final cat = categories[idx];
               return Card(
                 color: AppColors.card,
-                margin: EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                   side: BorderSide(color: AppColors.border),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                   title: Text(
                     cat.name,
                     style: GoogleFonts.manrope(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
@@ -1596,7 +1690,7 @@ class _CategoriesTab extends ConsumerWidget {
                         onPressed: () => _addEditCategoryDialog(context, db, existing: cat),
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
+                        icon: const Icon(Icons.delete_outline_rounded, color: AppColors.error, size: 20),
                         onPressed: () => _confirmDeleteCategory(context, db, cat),
                       ),
                     ],
@@ -1610,7 +1704,7 @@ class _CategoriesTab extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addEditCategoryDialog(context, db),
         backgroundColor: AppColors.primary,
-        child: Icon(Icons.add, color: Colors.black),
+        child: const Icon(Icons.add, color: Colors.black),
       ),
     );
   }
@@ -1633,14 +1727,14 @@ class _CategoriesTab extends ConsumerWidget {
               decoration: const InputDecoration(labelText: 'Category Name'),
               style: TextStyle(color: AppColors.textPrimary),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: dailyController,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Default Daily Rate (Rs)'),
               style: TextStyle(color: AppColors.textPrimary),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
               controller: halfController,
               keyboardType: TextInputType.number,
@@ -1690,12 +1784,12 @@ class _CategoriesTab extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.card,
-        title: Text('Delete Category?'),
+        title: const Text('Delete Category?'),
         content: Text('Warning: This will delete the category "${cat.name}" and ALL employees inside it.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel'),
+            child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1703,7 +1797,7 @@ class _CategoriesTab extends ConsumerWidget {
               if (ctx.mounted) Navigator.pop(ctx);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: Text('Delete'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -1733,7 +1827,7 @@ void _showEmployeeAttendanceHistory(
     context: context,
     isScrollControlled: true,
     backgroundColor: AppColors.bg,
-    shape: RoundedRectangleBorder(
+    shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
     builder: (context) => _EmployeeAttendanceHistorySheet(
@@ -1767,7 +1861,7 @@ class _EmployeeAttendanceHistorySheetState
     final db = ref.watch(databaseProvider);
     final categoryName = widget.categories
         .firstWhere((c) => c.id == widget.staff.categoryId,
-            orElse: () => StaffCategory(id: 0, name: 'Unknown', defaultDailyRate: 0, defaultHalfDayRate: 0))
+            orElse: () => const StaffCategory(id: 0, name: 'Unknown', defaultDailyRate: 0, defaultHalfDayRate: 0))
         .name;
 
     return DraggableScrollableSheet(
@@ -1790,7 +1884,7 @@ class _EmployeeAttendanceHistorySheetState
 
             return SingleChildScrollView(
               controller: scrollController,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1799,7 +1893,7 @@ class _EmployeeAttendanceHistorySheetState
                     child: Container(
                       width: 40,
                       height: 5,
-                      margin: EdgeInsets.only(bottom: 20),
+                      margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
                         color: AppColors.border,
                         borderRadius: BorderRadius.circular(10),
@@ -1815,7 +1909,7 @@ class _EmployeeAttendanceHistorySheetState
                         height: 52,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           border: Border.all(color: AppColors.primary, width: 1.5),
                         ),
                         child: Center(
@@ -1829,7 +1923,7 @@ class _EmployeeAttendanceHistorySheetState
                           ),
                         ),
                       ),
-                      SizedBox(width: 14),
+                      const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -1854,7 +1948,7 @@ class _EmployeeAttendanceHistorySheetState
                       ),
                     ],
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Divider(color: AppColors.border),
 
                   // Month Selector Row
@@ -1897,7 +1991,7 @@ class _EmployeeAttendanceHistorySheetState
                       ),
                     ],
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   // Quick Monthly Summary Cards
                   Row(
@@ -1909,7 +2003,7 @@ class _EmployeeAttendanceHistorySheetState
                       _buildMiniStatCard('Holiday', holidayCount, AppColors.info),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
                   // Calendar Grid Label
                   Text(
@@ -1921,12 +2015,12 @@ class _EmployeeAttendanceHistorySheetState
                       letterSpacing: 1,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   // Calendar
                   _buildCalendarGrid(attendanceMap),
 
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
                   // Attendance Notes Section
                   Text(
@@ -1938,7 +2032,7 @@ class _EmployeeAttendanceHistorySheetState
                       letterSpacing: 1,
                     ),
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   _buildNotesList(attendanceList),
                 ],
               ),
@@ -1952,7 +2046,7 @@ class _EmployeeAttendanceHistorySheetState
   Widget _buildMiniStatCard(String label, int count, Color color) {
     return Container(
       width: 70,
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(10),
@@ -1968,7 +2062,7 @@ class _EmployeeAttendanceHistorySheetState
               color: color,
             ),
           ),
-          SizedBox(height: 2),
+          const SizedBox(height: 2),
           Text(
             label,
             style: GoogleFonts.inter(
@@ -1990,7 +2084,7 @@ class _EmployeeAttendanceHistorySheetState
     final weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
     return Container(
-      padding: EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
@@ -2015,9 +2109,9 @@ class _EmployeeAttendanceHistorySheetState
               );
             }).toList(),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Divider(color: AppColors.border, height: 1),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
 
           // Days Grid
           GridView.builder(
@@ -2031,7 +2125,7 @@ class _EmployeeAttendanceHistorySheetState
             itemCount: daysInMonth + firstDayOffset,
             itemBuilder: (context, index) {
               if (index < firstDayOffset) {
-                return SizedBox();
+                return const SizedBox();
               }
 
               final day = index - firstDayOffset + 1;
@@ -2045,22 +2139,22 @@ class _EmployeeAttendanceHistorySheetState
               IconData? icon;
 
               if (status == 'present') {
-                bg = AppColors.success.withOpacity(0.15);
+                bg = AppColors.success.withValues(alpha: 0.15);
                 borderCol = AppColors.success;
                 textCol = AppColors.success;
                 icon = Icons.check_circle_outline_rounded;
               } else if (status == 'half_day') {
-                bg = AppColors.warning.withOpacity(0.15);
+                bg = AppColors.warning.withValues(alpha: 0.15);
                 borderCol = AppColors.warning;
                 textCol = AppColors.warning;
                 icon = Icons.star_half_rounded;
               } else if (status == 'absent') {
-                bg = AppColors.error.withOpacity(0.15);
+                bg = AppColors.error.withValues(alpha: 0.15);
                 borderCol = AppColors.error;
                 textCol = AppColors.error;
                 icon = Icons.cancel_outlined;
               } else if (status == 'holiday') {
-                bg = AppColors.info.withOpacity(0.15);
+                bg = AppColors.info.withValues(alpha: 0.15);
                 borderCol = AppColors.info;
                 textCol = AppColors.info;
                 icon = Icons.beach_access_rounded;
@@ -2131,7 +2225,7 @@ class _EmployeeAttendanceHistorySheetState
     if (listWithNotes.isEmpty) {
       return Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.card,
           borderRadius: BorderRadius.circular(12),
@@ -2157,8 +2251,8 @@ class _EmployeeAttendanceHistorySheetState
         if (item.status == 'holiday') badgeColor = AppColors.info;
 
         return Container(
-          margin: EdgeInsets.only(bottom: 8),
-          padding: EdgeInsets.all(12),
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppColors.card,
             borderRadius: BorderRadius.circular(12),
@@ -2175,9 +2269,9 @@ class _EmployeeAttendanceHistorySheetState
                     style: GoogleFonts.manrope(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: badgeColor.withOpacity(0.12),
+                      color: badgeColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -2187,7 +2281,7 @@ class _EmployeeAttendanceHistorySheetState
                   ),
                 ],
               ),
-              SizedBox(height: 6),
+              const SizedBox(height: 6),
               Text(
                 item.notes,
                 style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
@@ -2233,7 +2327,7 @@ class _EmployeeAttendanceHistorySheetState
                   }),
                 ],
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextField(
                 controller: notesController,
                 decoration: const InputDecoration(
@@ -2289,7 +2383,7 @@ class _EmployeeAttendanceHistorySheetState
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: isSelected ? color.withOpacity(0.15) : AppColors.surface,
+              color: isSelected ? color.withValues(alpha: 0.15) : AppColors.surface,
               shape: BoxShape.circle,
               border: Border.all(
                 color: isSelected ? color : AppColors.border,
@@ -2308,7 +2402,7 @@ class _EmployeeAttendanceHistorySheetState
               size: 18,
             ),
           ),
-          SizedBox(height: 4),
+          const SizedBox(height: 4),
           Text(
             label,
             style: GoogleFonts.manrope(

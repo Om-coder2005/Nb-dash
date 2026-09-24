@@ -13,7 +13,6 @@ import 'package:nextbills/core/utils/formatters.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
 import 'package:nextbills/shared/widgets/nb_button.dart';
 import 'package:nextbills/shared/widgets/nb_input.dart';
-import 'package:nextbills/shared/widgets/nb_dialog.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
 import 'package:nextbills/shared/widgets/nb_toast.dart';
 import 'package:nextbills/features/order/order_screen.dart';
@@ -433,7 +432,7 @@ class _BillPreview extends ConsumerWidget {
         final gstin = snap.data?['gstin'];
 
         return Container(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -444,7 +443,7 @@ class _BillPreview extends ConsumerWidget {
               if (logoBase64 != null) ...[
                 Image.memory(base64Decode(logoBase64),
                     width: 60, height: 60, fit: BoxFit.contain),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
               ],
               Text(
                 hotelName,
@@ -456,13 +455,13 @@ class _BillPreview extends ConsumerWidget {
                 textAlign: TextAlign.center,
               ),
               if (gstin != null && gstin.isNotEmpty) ...[
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   'GSTIN: $gstin',
                   style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w600, color: Colors.black87),
                 ),
               ],
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               const Divider(color: Colors.black12),
 
               // Table info
@@ -473,38 +472,38 @@ class _BillPreview extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text('Table: ${table?.tableNumber ?? '-'}',
-                          style: TextStyle(color: Colors.black87, fontSize: 12)),
+                          style: const TextStyle(color: Colors.black87, fontSize: 12)),
                       if (billNumber != null)
                         Text('Bill No: $billNumber',
-                            style: TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.bold)),
+                            style: const TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   Text(Fmt.datetime(DateTime.now()),
-                      style: TextStyle(color: Colors.black54, fontSize: 11)),
+                      style: const TextStyle(color: Colors.black54, fontSize: 11)),
                 ],
               ),
               const Divider(color: Colors.black12),
 
               // Items
               ...items.map((item) => Padding(
-                    padding: EdgeInsets.symmetric(vertical: 3),
+                    padding: const EdgeInsets.symmetric(vertical: 3),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(item.itemName,
-                              style: TextStyle(color: Colors.black87, fontSize: 12)),
+                              style: const TextStyle(color: Colors.black87, fontSize: 12)),
                         ),
                         Text(
                           '${item.quantity} x ${Fmt.currencyShort(item.itemPrice)}',
-                          style: TextStyle(color: Colors.black54, fontSize: 12),
+                          style: const TextStyle(color: Colors.black54, fontSize: 12),
                         ),
-                        SizedBox(width: 12),
+                        const SizedBox(width: 12),
                         SizedBox(
                           width: 70,
                           child: Text(
                             Fmt.currencyShort(item.itemPrice * item.quantity),
                             textAlign: TextAlign.right,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.black87,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600),
@@ -523,24 +522,24 @@ class _BillPreview extends ConsumerWidget {
               if (enableGst && sgstAmount > 0) _BillRow('SGST (${sgstRate.toStringAsFixed(1)}%)', Fmt.currencyShort(sgstAmount)),
               const Divider(color: Colors.black),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 4),
+                padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
                   children: [
-                    Text('TOTAL',
+                    const Text('TOTAL',
                         style: TextStyle(
                             color: Colors.black, fontWeight: FontWeight.w800, fontSize: 16)),
                     const Spacer(),
                     Text(
                       Fmt.currencyShort(total),
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.w800, fontSize: 16),
                     ),
                   ],
                 ),
               ),
               _BillRow('Payment', paymentMethod.toUpperCase()),
-              SizedBox(height: 12),
-              Text('Thank you! Visit Again..',
+              const SizedBox(height: 12),
+              const Text('Thank you! Visit Again..',
                   style: TextStyle(
                       color: Colors.black54,
                       fontSize: 12,
@@ -561,14 +560,14 @@ class _BillRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
           Text(label,
-              style: TextStyle(color: Colors.black54, fontSize: 12)),
+              style: const TextStyle(color: Colors.black54, fontSize: 12)),
           const Spacer(),
           Text(value,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w600)),
         ],
       ),
@@ -636,7 +635,7 @@ class _PaymentPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -646,7 +645,7 @@ class _PaymentPanel extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: AppColors.textPrimary)),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Totals summary
           _SummaryRow('Subtotal', Fmt.currency(subtotal)),
@@ -673,7 +672,7 @@ class _PaymentPanel extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Discount Input with Flat (Rs) / Percentage (%) Toggle
           Row(
@@ -737,13 +736,13 @@ class _PaymentPanel extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
           // Payment method
           Text('Payment Method',
               style: GoogleFonts.inter(
                   fontSize: 12, color: AppColors.textSecondary)),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Row(
             children: ['cash', 'card', 'upi', 'split'].map((method) {
               final isSelected = paymentMethod == method;
@@ -755,12 +754,12 @@ class _PaymentPanel extends StatelessWidget {
               };
               return Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(right: 6),
+                  padding: const EdgeInsets.only(right: 6),
                   child: GestureDetector(
                     onTap: () => onPaymentMethodChanged(method),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primaryGlow
@@ -780,7 +779,7 @@ class _PaymentPanel extends StatelessWidget {
                               color: isSelected
                                   ? AppColors.primary
                                   : AppColors.textMuted),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
                             method.toUpperCase(),
                             style: GoogleFonts.manrope(
@@ -801,7 +800,7 @@ class _PaymentPanel extends StatelessWidget {
           ),
 
           if (paymentMethod == 'cash') ...[
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             NbInput(
               controller: cashController,
               type: NbInputType.number,
@@ -810,20 +809,20 @@ class _PaymentPanel extends StatelessWidget {
               prefixIcon: Icons.money_rounded,
             ),
             if (change > 0) ...[
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                   border:
-                      Border.all(color: AppColors.success.withOpacity(0.3)),
+                      Border.all(color: AppColors.success.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.change_circle_outlined,
+                    const Icon(Icons.change_circle_outlined,
                         color: AppColors.success, size: 18),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text('Change: ${Fmt.currency(change)}',
                         style: GoogleFonts.manrope(
                             fontWeight: FontWeight.w700,
@@ -834,7 +833,7 @@ class _PaymentPanel extends StatelessWidget {
               ),
             ],
           ] else if (paymentMethod == 'split') ...[
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -889,7 +888,7 @@ class _PaymentPanel extends StatelessWidget {
             ],
           ],
 
-          SizedBox(height: 24),
+          const SizedBox(height: 24),
 
           SizedBox(
             width: double.infinity,
@@ -902,7 +901,7 @@ class _PaymentPanel extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           SizedBox(
             width: double.infinity,
@@ -940,7 +939,7 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
           Text(label,
@@ -1001,7 +1000,7 @@ class _UpiQrWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

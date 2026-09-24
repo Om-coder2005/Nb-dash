@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nextbills/app/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nextbills/app/theme.dart';
 
 enum NbToastType { success, error, info, warning }
 
@@ -35,7 +35,6 @@ class NbToast {
         defaultIcon = Icons.warning;
         break;
       case NbToastType.info:
-      default:
         bgColor = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
         iconColor = AppColors.info;
         defaultIcon = Icons.info;
@@ -136,7 +135,7 @@ class _NbToastWidgetState extends State<_NbToastWidget> with SingleTickerProvide
                     color: widget.bgColor,
                     borderRadius: AppRadius.lgBorder,
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))
                     ],
                   ),
                   child: Row(

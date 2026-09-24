@@ -157,36 +157,36 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         ],
       ),
       body: ListView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         children: [
           // ─── Hotel Info
-          _SectionHeader('Restaurant Info'),
-          SizedBox(height: 12),
+          const _SectionHeader('Restaurant Info'),
+          const SizedBox(height: 12),
           NbInput(
             controller: _hotelNameController,
             hintText: 'Restaurant / Hotel Name (Printed on bills)',
             prefixIcon: Icons.restaurant_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           NbInput(
             controller: _hotelAddressController,
             hintText: 'Address (optional)',
             prefixIcon: Icons.location_on_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           NbInput(
             controller: _hotelPhoneController,
             type: NbInputType.number,
             hintText: 'Phone Number (optional)',
             prefixIcon: Icons.phone_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           NbInput(
             controller: _footerController,
             hintText: 'Receipt Footer Message',
             prefixIcon: Icons.text_fields_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           
           // Logo Upload Tile
           _SettingsTile(
@@ -230,23 +230,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── UPI Payment & Soundbox Settings
-          _SectionHeader('UPI Payment & Soundbox QR'),
-          SizedBox(height: 12),
+          const _SectionHeader('UPI Payment & Soundbox QR'),
+          const SizedBox(height: 12),
           NbInput(
             controller: _upiIdController,
             hintText: 'UPI VPA ID (e.g. merchant@upi / 9876543210@upi)',
             prefixIcon: Icons.qr_code_2_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           NbInput(
             controller: _soundboxTrController,
             hintText: 'Soundbox TR / Payee Name (optional)',
             prefixIcon: Icons.speaker_group_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.qr_code_scanner_rounded,
             iconColor: AppColors.primary,
@@ -254,7 +254,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Prints dynamic QR code with exact bill amount for UPI apps',
             trailing: Switch(
               value: _enablePrintUpiQr,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
               onChanged: (val) async {
                 setState(() => _enablePrintUpiQr = val);
                 final prefs = await SharedPreferences.getInstance();
@@ -269,17 +269,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── GST & Tax Settings
-          _SectionHeader('GST & Tax Configuration'),
-          SizedBox(height: 12),
+          const _SectionHeader('GST & Tax Configuration'),
+          const SizedBox(height: 12),
           NbInput(
             controller: _gstinController,
             hintText: 'GSTIN Number (e.g. 27AAAAA0000A1Z5)',
             prefixIcon: Icons.receipt_long_rounded,
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Row(
             children: [
               Expanded(
@@ -290,7 +290,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   prefixIcon: Icons.percent_rounded,
                 ),
               ),
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               Expanded(
                 child: NbInput(
                   controller: _sgstRateController,
@@ -301,7 +301,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.request_quote_rounded,
             iconColor: AppColors.primary,
@@ -309,7 +309,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Automatically calculates and prints CGST & SGST breakdown on bills',
             trailing: Switch(
               value: _enableGst,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
               onChanged: (val) async {
                 setState(() => _enableGst = val);
                 final prefs = await SharedPreferences.getInstance();
@@ -324,11 +324,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── Appearance
-          _SectionHeader('Appearance'),
-          SizedBox(height: 12),
+          const _SectionHeader('Appearance'),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.dark_mode_rounded,
             iconColor: AppColors.primary,
@@ -340,7 +340,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ref.read(themeModeProvider.notifier).state =
                     val ? ThemeMode.dark : ThemeMode.light;
               },
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
             ),
             onTap: () {
               final isDark = ref.read(themeModeProvider) == ThemeMode.dark;
@@ -349,11 +349,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── Security & Audit Log
-          _SectionHeader('Security & Audit Log'),
-          SizedBox(height: 12),
+          const _SectionHeader('Security & Audit Log'),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.history_edu_rounded,
             iconColor: AppColors.error,
@@ -361,7 +361,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'View history of post-print bill alterations & item removals',
             onTap: () => _showEditedBillsDialog(context, ref),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.lock_rounded,
             iconColor: AppColors.warning,
@@ -369,7 +369,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Update your 4-digit unlock PIN',
             onTap: () => _changePinDialog(context),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.admin_panel_settings_rounded,
             iconColor: AppColors.error,
@@ -378,11 +378,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () => _changeAdminPinDialog(context),
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── Navigation shortcuts
-          _SectionHeader('Management'),
-          SizedBox(height: 12),
+          const _SectionHeader('Management'),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.table_restaurant_rounded,
             iconColor: AppColors.info,
@@ -390,7 +390,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Add, edit, reorder tables and zones',
             onTap: () => context.pushNamed('tables'),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.restaurant_menu_rounded,
             iconColor: AppColors.success,
@@ -398,7 +398,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Add items, import/export XLSX',
             onTap: () => context.pushNamed('menu'),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.print_rounded,
             iconColor: AppColors.primary,
@@ -406,7 +406,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Connect Bluetooth printer, test print',
             onTap: () => context.pushNamed('printer'),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.preview_rounded,
             iconColor: AppColors.info,
@@ -414,7 +414,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Display active order summary under occupied table cards',
             trailing: Switch(
               value: _enableTableQuickLook,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
               onChanged: (val) async {
                 setState(() => _enableTableQuickLook = val);
                 final prefs = await SharedPreferences.getInstance();
@@ -428,7 +428,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               await prefs.setBool('enable_table_quick_look', val);
             },
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.people_rounded,
             iconColor: AppColors.primary,
@@ -436,7 +436,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Manage attendance, payroll, and category wages',
             onTap: () => _showAdminAccessDialog(context, 'staff'),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.keyboard_rounded,
             iconColor: AppColors.primary,
@@ -444,7 +444,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Automatically open virtual keyboard on search focus',
             trailing: Switch(
               value: _autoLaunchKeyboard,
-              activeColor: AppColors.primary,
+              activeThumbColor: AppColors.primary,
               onChanged: (val) async {
                 setState(() => _autoLaunchKeyboard = val);
                 final prefs = await SharedPreferences.getInstance();
@@ -459,11 +459,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             },
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── Data Management
-          _SectionHeader('Data & Backup'),
-          SizedBox(height: 12),
+          const _SectionHeader('Data & Backup'),
+          const SizedBox(height: 12),
           _SettingsTile(
             icon: Icons.backup_rounded,
             iconColor: AppColors.success,
@@ -471,7 +471,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             subtitle: 'Share full database backup as JSON',
             onTap: _exportBackup,
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           _SettingsTile(
             icon: Icons.restore_rounded,
             iconColor: AppColors.warning,
@@ -480,13 +480,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: _importBackup,
           ),
 
-          SizedBox(height: 28),
+          const SizedBox(height: 28),
 
           // ─── About
-          _SectionHeader('About'),
-          SizedBox(height: 12),
+          const _SectionHeader('About'),
+          const SizedBox(height: 12),
           Container(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: AppColors.card,
               borderRadius: BorderRadius.circular(16),
@@ -507,7 +507,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: Image.asset('assets/logo.png', fit: BoxFit.cover),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
                   'NextBills',
                   style: GoogleFonts.manrope(
@@ -523,7 +523,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     color: AppColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   'Version 1.0.0',
                   style: GoogleFonts.inter(
@@ -535,7 +535,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           ),
 
-          SizedBox(height: 40),
+          const SizedBox(height: 40),
 
           // ─── Logout / Lock
           NbButton(
@@ -603,14 +603,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               maxLength: 4,
               hintText: 'Current Admin PIN',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             NbInput(
               controller: newPinController,
               type: NbInputType.number,
               maxLength: 4,
               hintText: 'New Admin PIN (4 digits)',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             NbInput(
               controller: confirmPinController,
               type: NbInputType.number,
@@ -662,7 +662,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               maxLength: 4,
               hintText: 'New PIN (4 digits)',
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             NbInput(
               controller: confirmPinController,
               type: NbInputType.number,
@@ -775,7 +775,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.verified_user_rounded, size: 48, color: AppColors.success),
+                      const Icon(Icons.verified_user_rounded, size: 48, color: AppColors.success),
                       const SizedBox(height: 12),
                       Text('No edited bills recorded.', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textMuted)),
                       const SizedBox(height: 4),
@@ -794,8 +794,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     color: AppColors.surface,
                     child: ExpansionTile(
                       leading: CircleAvatar(
-                        backgroundColor: AppColors.error.withOpacity(0.15),
-                        child: Icon(Icons.edit_note_rounded, color: AppColors.error, size: 20),
+                        backgroundColor: AppColors.error.withValues(alpha: 0.15),
+                        child: const Icon(Icons.edit_note_rounded, color: AppColors.error, size: 20),
                       ),
                       title: Text(
                         'Bill #${log.billNumber} (${log.tableLabel})',
@@ -803,7 +803,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       ),
                       subtitle: Text(
                         'Original: ₹${log.originalTotal.toStringAsFixed(0)} ➔ New: ₹${log.newTotal.toStringAsFixed(0)} • ${DateFormat('dd MMM hh:mm a').format(log.editedAt)}',
-                        style: TextStyle(fontSize: 12, color: AppColors.error),
+                        style: const TextStyle(fontSize: 12, color: AppColors.error),
                       ),
                       children: [
                         FutureBuilder<List<EditedBillItem>>(
@@ -897,7 +897,7 @@ class _SettingsTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.15),
+            color: iconColor.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: iconColor, size: 22),
@@ -914,7 +914,7 @@ class _SettingsTile extends StatelessWidget {
           children: [
             if (trailing != null) ...[
               trailing!,
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
             ],
             Icon(Icons.chevron_right_rounded,
                 color: AppColors.textMuted, size: 20),

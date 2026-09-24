@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/app/router.dart';
 import 'package:nextbills/features/printer/printer_service.dart';
-import 'package:nextbills/features/printer/sound_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

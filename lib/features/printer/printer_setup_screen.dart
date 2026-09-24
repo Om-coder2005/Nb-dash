@@ -1,17 +1,17 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import 'package:nextbills/app/theme.dart';
 import 'package:nextbills/shared/widgets/nb_app_bar.dart';
 import 'package:nextbills/shared/widgets/nb_button.dart';
-import 'package:nextbills/shared/widgets/nb_toast.dart';
 import 'package:nextbills/shared/widgets/nb_loading.dart';
-import 'printer_service.dart';
+import 'package:nextbills/shared/widgets/nb_toast.dart';
 
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'android_bluetooth_printer_service.dart';
+import 'printer_service.dart';
 
 // Riverpod provider to scan installed Windows printers
 final scannedPrintersProvider = FutureProvider.autoDispose<List<ScannedPrinterDevice>>((ref) async {
@@ -33,7 +33,7 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
   bool _isDrawerTesting = false;
   
   List<BluetoothDevice> _bondedDevices = [];
-  List<BluetoothDevice> _scannedDevices = [];
+  final List<BluetoothDevice> _scannedDevices = [];
   bool _isScanningBt = false;
   final AndroidBluetoothPrinterService _btService = AndroidBluetoothPrinterService();
 
@@ -169,7 +169,7 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline_rounded, color: AppColors.error, size: 48),
+                    const Icon(Icons.error_outline_rounded, color: AppColors.error, size: 48),
                     const SizedBox(height: 16),
                     Text('Failed to scan printers: $e', style: GoogleFonts.inter(color: AppColors.textPrimary)),
                   ],
@@ -244,19 +244,19 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
     String statusDesc = 'Configure a printer below to start printing bills';
 
     if (isConnected) {
-      panelColor = AppColors.success.withOpacity(0.15);
+      panelColor = AppColors.success.withValues(alpha: 0.15);
       iconColor = AppColors.success;
       statusIcon = Icons.print_rounded;
       statusTitle = 'Connected: ${state.deviceName}';
       statusDesc = 'Port: ${state.port} | Mode: ${state.connectionMode == PrinterConnectionMode.raw ? "RAW" : "GDI"}';
     } else if (isOffline) {
-      panelColor = AppColors.error.withOpacity(0.1);
+      panelColor = AppColors.error.withValues(alpha: 0.1);
       iconColor = AppColors.error;
       statusIcon = Icons.warning_amber_rounded;
       statusTitle = 'Offline / Error: ${state.deviceName}';
       statusDesc = 'Verify printer is turned ON and connected to PC';
     } else if (isConnecting) {
-      panelColor = AppColors.info.withOpacity(0.15);
+      panelColor = AppColors.info.withValues(alpha: 0.15);
       iconColor = AppColors.info;
       statusIcon = Icons.sync_rounded;
       statusTitle = 'Connecting to printer...';
@@ -268,7 +268,7 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: isConnected ? AppColors.success.withOpacity(0.4) : isOffline ? AppColors.error.withOpacity(0.4) : AppColors.border),
+        border: Border.all(color: isConnected ? AppColors.success.withValues(alpha: 0.4) : isOffline ? AppColors.error.withValues(alpha: 0.4) : AppColors.border),
       ),
       child: Row(
         children: [
@@ -308,7 +308,7 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
           if (state.deviceName != null)
             IconButton(
               onPressed: _disconnectPrinter,
-              icon: Icon(Icons.power_settings_new_rounded, color: AppColors.error),
+              icon: const Icon(Icons.power_settings_new_rounded, color: AppColors.error),
               tooltip: 'Disconnect Printer',
             ),
         ],
@@ -319,8 +319,6 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
   Widget _buildPrinterListCard(ScannedPrinterDevice device, PrinterState state) {
     final isSelected = state.deviceName == device.name;
     final isConnected = isSelected && state.status == PrinterStatus.connected;
-    final isOffline = isSelected && state.status == PrinterStatus.offline;
-
     IconData connectionIcon = Icons.device_unknown_rounded;
     switch (device.connectionType) {
       case PrinterConnectionType.usb:
@@ -393,7 +391,7 @@ class _PrinterSetupScreenState extends ConsumerState<PrinterSetupScreen>
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary.withOpacity(0.15) : AppColors.surface,
+            color: isSelected ? AppColors.primary.withValues(alpha: 0.15) : AppColors.surface,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
